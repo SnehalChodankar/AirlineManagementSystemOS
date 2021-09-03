@@ -79,7 +79,6 @@ public class passengerController {
     private Button btnPassengerDelete;
 
     public void resetTextField(){
-        tfCode.setText("");
         tfFirstname.setText("");
         tfMiddlename.setText("");
         tfLastname.setText("");
@@ -142,7 +141,7 @@ public class passengerController {
     }
 
     private void insertPassengerRecord() {
-        String query = "INSERT INTO passenger VALUES ("+ tfCode.getText() + ",'" + tfFirstname.getText() + "','" + tfMiddlename.getText() + "','" + tfLastname.getText() + "','" + tfDOB.getValue() + "')";
+        String query = "INSERT INTO `passenger`(`First_Name`, `Middle_Name`, `Last_Name`, `Passenger_DOB`) VALUES ('"+ tfFirstname.getText() + "','" + tfMiddlename.getText() + "','" + tfLastname.getText() + "','" + tfDOB.getValue() + "')";
         executeQuery(query);
         showPassengers();
         resetTextField();
