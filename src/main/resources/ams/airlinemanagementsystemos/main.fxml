@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="491.0" prefWidth="696.0" style="-fx-background-image: url(&quot;file:C:/Users/skchodankar/IdeaProjects/AirlineManagementSystemOS/images/bluebg.png&quot;); -fx-background-repeat: no-repeat; -fx-background-size: cover;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.mainController">
+<AnchorPane prefHeight="491.0" prefWidth="696.0" style="-fx-background-image: url(&quot;file:C:/Users/fdagama/IdeaProjects/AirlineManagementSystemOS/images/bluebg.png&quot;); -fx-background-repeat: no-repeat; -fx-background-size: cover;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.mainController">
    <children>
       <Label alignment="CENTER" prefHeight="250.0" prefWidth="696.0" style="-fx-background-color: none; -fx-opacity: 0.8; -fx-background-repeat: no-repeat;" text="AIRLINE MANAGEMENT SYSTEM" textAlignment="CENTER" textFill="#14114f" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <font>
