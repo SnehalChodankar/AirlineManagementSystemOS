@@ -25,7 +25,13 @@ import javafx.stage.Stage;
 public class passengerController {
     private Stage stage;
     private Scene scene;
-    private Parent root;
+
+    public int airlineCode;
+
+    public void setAirline(int acode){
+        this.airlineCode = acode;
+        System.out.println(airlineCode);
+    }
 
     @FXML
     private ResourceBundle resources;

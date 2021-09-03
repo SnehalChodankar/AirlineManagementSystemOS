@@ -16,12 +16,14 @@ public class Airlines {
     private String Airline_Email;
     private LocalDate License_Issue;
     private LocalDate License_Expiry;
-    private String durationFinal;
+    private String Duration;
     private int days;
     private int months;
     private int years;
+    private int Total_Flights;
+    private int Flights_Today;
 
-    public Airlines(int airline_Code, String airline_Name, String airline_Address, String airline_City, String airline_State, int airline_Zip, String airline_Email, Date license_Issue, Date license_Expiry) {
+    public Airlines(int airline_Code, String airline_Name, String airline_Address, String airline_City, String airline_State, int airline_Zip, String airline_Email, Date license_Issue, Date license_Expiry, int total_Flights, int flights_Today) {
         this.Airline_Code = airline_Code;
         this.Airline_Name = airline_Name;
         this.Airline_Address = airline_Address;
@@ -40,7 +42,10 @@ public class Airlines {
         this.months = Period.between(licIss, licExp).getMonths();
         this.years = Period.between(licIss, licExp).getYears();
 
-        this.durationFinal = days+" Days, "+ months +" Months, "+ years +" Years";
+        this.Duration = days+" Days, "+ months +" Months, "+ years +" Years";
+
+        this.Total_Flights=total_Flights;
+        this.Flights_Today=flights_Today;
     }
 
     public int getAirline_Code() {
@@ -79,6 +84,15 @@ public class Airlines {
         return License_Expiry;
     }
 
-    public  String getDuration(){ return durationFinal; }
+    public String getDuration() {
+        return Duration;
+    }
 
+    public int getTotal_Flights() {
+        return Total_Flights;
+    }
+
+    public int getFlights_Today() {
+        return Flights_Today;
+    }
 }

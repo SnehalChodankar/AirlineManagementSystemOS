@@ -115,6 +115,7 @@ public class airlineController {
     private Button btnAirlineDelete;
 
     @FXML
+    // Handler for Back button i.e. to navigate back to Main Page
         void onBackAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
@@ -124,9 +125,12 @@ public class airlineController {
     }
 
     @FXML
+    // Handler for Airport button i.e. to navigate to Airports Page
     void goToAirports(ActionEvent event) throws IOException {
         Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
 
+        // Only allowed to navigate to Airport Page if an Airline has been selected
+        // Airport page consists of details of airports partnered with a particular airline
         if(airline == null){
             System.out.println("Please select an airline to proceed to airport details.");
         }
@@ -146,23 +150,55 @@ public class airlineController {
     }
 
     @FXML
+    // Handler for Flights button i.e. to navigate to Flights Page
     void goToFlights(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("flight.fxml"));
-        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
+
+        // Only allowed to navigate to Flight Page if an Airline has been selected
+        // Flight page consists of details of Flights owned by a particular airline
+        if(airline == null){
+            System.out.println("Please select an airline to proceed to airport details.");
+        }
+        else {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("flight.fxml"));
+            Parent root = loader.load();
+
+            flightController flightC = loader.getController();
+            flightC.setAirline(airline.getAirline_Code());
+
+            stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
+
     }
 
     @FXML
+    // Handler for Passengers button i.e. to navigate to Passengers Page
     void goToPassengers(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("passenger.fxml"));
-        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
+
+        // Only allowed to navigate to Passenger Page if an Airline has been selected
+        // Passenger page consists of Airline Customer Details
+        // i.e. Customers who have created accounts with the Airline
+        if(airline == null){
+            System.out.println("Please select an airline to proceed to airport details.");
+        }
+        else {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Passenger.fxml"));
+            Parent root = loader.load();
+
+            passengerController passengerC = loader.getController();
+            passengerC.setAirline(airline.getAirline_Code());
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
+    //Using JDBC to create connection with database
     public Connection getConnection(){
         Connection conn;
         try {
@@ -171,28 +207,50 @@ public class airlineController {
             System.out.println("Connected to db!!!");
             return conn;
         }
+    //Error Message if connection couldn't be established
         catch (Exception ex){
             System.out.println("Error: "+ ex.getMessage());
             return null;
         }
     }
 
+    //Creates a list of Airline objects which reflect the data from the Airline table
     public ObservableList<Airlines> getAirlinesList(){
         ObservableList<Airlines> airlineList = FXCollections.observableArrayList();
         Connection conn = getConnection();
-        String query = "SELECT * FROM airline";
+
+        //query for retrieving total number of aircraft owned by each airline
+        String FData_query="SELECT COUNT(`Flight_Code`) FROM flight GROUP BY `Carrier_Name` HAVING `Carrier_Name`=`Airline_Name`";
+
+        //query for retrieving total number of Flights active on the current day
+        String RData_query="SELECT COUNT(DISTINCT`route`.`Flight_Code`) FROM route,flight" +
+                " WHERE route.Flight_Code=flight.Flight_Code AND `Carrier_Name`= `Airline_Name` AND DATE(`Departure_Date`) = DATE(NOW())";
+
+        //query for retrieving all necessary information to display in GUI of the Airline Page
+        String query = "SELECT `Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`," +
+                " `License_Issue`, `License_Expiry`" +
+                ",(" + FData_query + ") AS `Total_Flights`" +
+                ",(" + RData_query + ") AS `Flights_Today`" +
+                " FROM airline WHERE `Operational_Status` = 1";
+
         Statement st;
         ResultSet rs;
 
         try {
             st = conn.createStatement();
-            rs = st.executeQuery(query);
+            rs = st.executeQuery(query);        //resultant dataset from the query stored in rs
             Airlines airlines;
 
-            while (rs.next())
+            while (rs.next())           //Airline object created for each row entry in rs & added to the list
             {
-               airlines = new Airlines(rs.getInt("Airline_Code"), rs.getString("Airline_Name"), rs.getString("Airline_Address"),rs.getString("Airline_City"),rs.getString("Airline_State"), rs.getInt("Airline_Zip"), rs.getString("Airline_Email"), rs.getDate("License_Issue"),rs.getDate("License_Expiry"));
-                airlineList.add(airlines);
+               airlines = new Airlines(rs.getInt("Airline_Code"), rs.getString("Airline_Name"),
+                       rs.getString("Airline_Address"),rs.getString("Airline_City"),
+                       rs.getString("Airline_State"), rs.getInt("Airline_Zip"),
+                       rs.getString("Airline_Email"), rs.getDate("License_Issue"),
+                       rs.getDate("License_Expiry"),rs.getInt("Total_Flights"),
+                       rs.getInt("Flights_Today"));
+
+               airlineList.add(airlines);
             }
         }catch (Exception ex){
             ex.printStackTrace();
@@ -200,9 +258,11 @@ public class airlineController {
         return airlineList;
     }
 
+    //Displays Data from Airline Model
     public void showAirlines(){
-        ObservableList<Airlines> list = getAirlinesList();
+        ObservableList<Airlines> list = getAirlinesList();          //Retrieve data from DB in the form of a list of Airline objects
 
+        //Transfer data from objects to table in GUI
         colCode.setCellValueFactory(new PropertyValueFactory<Airlines, Integer>("Airline_Code"));
         colName.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Name"));
         colAddress.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Address"));
@@ -213,10 +273,13 @@ public class airlineController {
         colLicenseEffectiveDate.setCellValueFactory(new PropertyValueFactory<Airlines, LocalDate>("License_Issue"));
         colLicenseExpiryDate.setCellValueFactory(new PropertyValueFactory<Airlines, LocalDate>("License_Expiry"));
         colDuration.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Duration"));
+        colTotalFlights.setCellValueFactory(new PropertyValueFactory<Airlines, Integer>("Total_Flights"));
+        colFlightsDepartToday.setCellValueFactory(new PropertyValueFactory<Airlines, Integer>("Flights_Today"));
 
         tvAirlines.setItems(list);
     }
 
+    //to reset text fields after each operation
     public void resetTextField(){
         tfCode.setText("");
         tfName.setText("");
@@ -226,10 +289,10 @@ public class airlineController {
         tfZip.setText("");
         tfEmail.setText("");
         tfLicenseEffectiveDate.setValue(null);
-        //tfLicenseExpiryDate.setValue(null);
     }
 
     @FXML
+    //Autofills data in the respective fields when an entry is clicked in the table
     void handleAirlineCol(MouseEvent event) {
         Airlines airlines =  tvAirlines.getSelectionModel().getSelectedItem();
         tfCode.setText(""+airlines.getAirline_Code());
@@ -244,6 +307,7 @@ public class airlineController {
     }
 
     @FXML
+    //Handler for Insertion, Updation & Deletion of records
     void handleBtnIUDAction(ActionEvent event) {
         if(event.getSource() == btnAirlineInsert){
             insertAirlineRecord();
@@ -256,13 +320,15 @@ public class airlineController {
         }
     }
 
+    //Performs Deletion of record by using information from the necessary text field
     private void deleteAirlineRecord() {
-        String query = "DELETE FROM airline WHERE Airline_Code = "+tfCode.getText()+"";
+        String query = "UPDATE airline SET Operational_Status=0 WHERE Airline_Code = "+tfCode.getText()+"";
         executeQuery(query);
         showAirlines();
         resetTextField();
     }
 
+    //Performs Updation of record by using information from the necessary text field
     private void updateAirlineRecord() {
         LocalDate expiry_date = convertToExpiry();
         String query = "UPDATE airline SET Airline_Name = '"+ tfName.getText() + "', Airline_Address = '"+ tfAddress.getText() +"', Airline_City = '"+tfCity.getText()+"', Airline_State = '"+tfState.getText()+"', Airline_Zip = "+ Integer.parseInt(tfZip.getText()) +", Airline_Email = '"+ tfEmail.getText() +"', License_Issue = '"+ tfLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = "+tfCode.getText()+"";
@@ -271,6 +337,7 @@ public class airlineController {
         resetTextField();
     }
 
+    //Performs Insertion of record by using information from the necessary text field
     private void insertAirlineRecord() {
         LocalDate expiry_date = convertToExpiry();
         String query = "INSERT INTO airline(`Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`, `License_Issue`, `License_Expiry`) VALUES ("+ tfCode.getText() + ",'" + tfName.getText() + "','" + tfAddress.getText() + "','" + tfCity.getText() + "','" + tfState.getText() + "',"+ tfZip.getText() + ",'" + tfEmail.getText() + "','" + tfLicenseEffectiveDate.getValue() + "','" + expiry_date + "')";
@@ -278,16 +345,21 @@ public class airlineController {
         showAirlines();
         resetTextField();
     }
+
+    //Computes Expiry Date When License Issue Date and License Duration is input
     private LocalDate convertToExpiry(){
         LocalDate d= tfLicenseEffectiveDate.getValue();
         Integer dur = tfDuration.getValue();
         tfDuration.setValue(dur);
         Calendar cal = new GregorianCalendar();
         cal.set(d.getYear(), d.getMonthValue(), d.getDayOfMonth());
-        cal.add(Calendar.MONTH,dur-1);
+        cal.add(Calendar.MONTH,dur-1);                  //duration - 1 since Calendar Object stores months as 1 index less(0-11)
+                                                               //i.e. Month 7 Entered into Calendar will be seen as Month 8 by the Calendar
         LocalDate expiry = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
         return expiry;
     }
+
+    //executes query
     private void executeQuery(String query) {
         Connection conn = getConnection();
         Statement st;
@@ -300,6 +372,7 @@ public class airlineController {
     }
 
     @FXML
+    //initializer fn
     void initialize() {
         showAirlines();
         tfDuration.setItems(durationList);

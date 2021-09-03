@@ -17,7 +17,7 @@
          <children>
             <HBox prefHeight="399.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
                <children>
-                  <TableView prefHeight="389.0" prefWidth="607.0" HBox.hgrow="ALWAYS">
+                  <TableView fx:id="tvAirports" onMouseClicked="#handleAirportCol" prefHeight="389.0" prefWidth="607.0" HBox.hgrow="ALWAYS">
                      <columns>
                         <TableColumn fx:id="colCode" minWidth="0.0" prefWidth="58.6666898727417" text="Code" />
                         <TableColumn fx:id="colName" minWidth="0.0" prefWidth="209.33329010009766" text="Name" />
@@ -110,9 +110,9 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="297.0" prefWidth="372.0" spacing="10.0">
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Insert" />
-                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Update" />
-                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Delete" />
+                              <Button fx:id="btnAirportInsert" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="100.0" text="Insert" />
+                              <Button fx:id="btnAirportUpdate" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="100.0" text="Update" />
+                              <Button fx:id="btnAirportDelete" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="100.0" text="Delete" />
                            </children>
                         </HBox>
                      </children>
