@@ -1,36 +1,35 @@
 package ams.airlinemanagementsystemos;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.ResourceBundle;
 
 public class airlineController {
     private Stage stage;
     private Scene scene;
 
+    ObservableList<Integer> durationList = FXCollections.observableArrayList(6,12,24);
     @FXML
     private ResourceBundle resources;
 
@@ -104,6 +103,9 @@ public class airlineController {
     private DatePicker tfLicenseExpiryDate;
 
     @FXML
+    private ChoiceBox<Integer> tfDuration;
+
+    @FXML
     private Button btnAirlineInsert;
 
     @FXML
@@ -144,46 +146,27 @@ public class airlineController {
     }
 
     @FXML
-    void goToPassengers(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("passenger.fxml"));
-        Parent root = loader.load();
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    void goToFlights(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("flight.fxml"));
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-
-//        Parent root = FXMLLoader.load(getClass().getResource("passenger.fxml"));
-//        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        stage.setScene(scene);
-//        stage.show();
     }
 
     @FXML
-    void goToFlights(ActionEvent event) throws IOException {
-        Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
-
-        if(airline == null){
-            System.out.println("Please select an airline to proceed to flight details.");
-        }
-        else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("flight.fxml"));
-            Parent root = loader.load();
-
-            flightController flightc = loader.getController();
-            flightc.setAirline(airline.getAirline_Code());
-
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-
-        }
+    void goToPassengers(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("passenger.fxml"));
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public Connection getConnection(){
         Connection conn;
         try {
+
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams", "root", "");
             System.out.println("Connected to db!!!");
             return conn;
@@ -208,7 +191,7 @@ public class airlineController {
 
             while (rs.next())
             {
-                airlines = new Airlines(rs.getInt("Airline_Code"), rs.getString("Airline_Name"), rs.getString("Airline_Address"),rs.getString("Airline_City"),rs.getString("Airline_State"), rs.getInt("Airline_Zip"), rs.getString("Airline_Email"), rs.getDate("License_Issue"),rs.getDate("License_Expiry"));
+               airlines = new Airlines(rs.getInt("Airline_Code"), rs.getString("Airline_Name"), rs.getString("Airline_Address"),rs.getString("Airline_City"),rs.getString("Airline_State"), rs.getInt("Airline_Zip"), rs.getString("Airline_Email"), rs.getDate("License_Issue"),rs.getDate("License_Expiry"));
                 airlineList.add(airlines);
             }
         }catch (Exception ex){
@@ -229,7 +212,7 @@ public class airlineController {
         colEmail.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Email"));
         colLicenseEffectiveDate.setCellValueFactory(new PropertyValueFactory<Airlines, LocalDate>("License_Issue"));
         colLicenseExpiryDate.setCellValueFactory(new PropertyValueFactory<Airlines, LocalDate>("License_Expiry"));
-        colDuration.setCellValueFactory(new PropertyValueFactory<Airlines, String>("duration"));
+        colDuration.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Duration"));
 
         tvAirlines.setItems(list);
     }
@@ -243,7 +226,7 @@ public class airlineController {
         tfZip.setText("");
         tfEmail.setText("");
         tfLicenseEffectiveDate.setValue(null);
-        tfLicenseExpiryDate.setValue(null);
+        //tfLicenseExpiryDate.setValue(null);
     }
 
     @FXML
@@ -281,19 +264,30 @@ public class airlineController {
     }
 
     private void updateAirlineRecord() {
-        String query = "UPDATE airline SET Airline_Name = '"+ tfName.getText() + "', Airline_Address = '"+ tfAddress.getText() +"', Airline_City = '"+tfCity.getText()+"', Airline_State = '"+tfState.getText()+"', Airline_Zip = "+ Integer.parseInt(tfZip.getText()) +", Airline_Email = '"+ tfEmail.getText() +"', License_Issue = '"+ tfLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ tfLicenseExpiryDate.getValue() +"' WHERE Airline_Code = "+tfCode.getText()+"";
+        LocalDate expiry_date = convertToExpiry();
+        String query = "UPDATE airline SET Airline_Name = '"+ tfName.getText() + "', Airline_Address = '"+ tfAddress.getText() +"', Airline_City = '"+tfCity.getText()+"', Airline_State = '"+tfState.getText()+"', Airline_Zip = "+ Integer.parseInt(tfZip.getText()) +", Airline_Email = '"+ tfEmail.getText() +"', License_Issue = '"+ tfLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = "+tfCode.getText()+"";
         executeQuery(query);
         showAirlines();
         resetTextField();
     }
 
     private void insertAirlineRecord() {
-        String query = "INSERT INTO airline VALUES ("+ tfCode.getText() + ",'" + tfName.getText() + "','" + tfAddress.getText() + "','" + tfCity.getText() + "','" + tfState.getText() + "',"+ tfZip.getText() + ",'" + tfEmail.getText() + "','" + tfLicenseEffectiveDate.getValue() + "','" + tfLicenseExpiryDate.getValue() + "')";
+        LocalDate expiry_date = convertToExpiry();
+        String query = "INSERT INTO airline(`Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`, `License_Issue`, `License_Expiry`) VALUES ("+ tfCode.getText() + ",'" + tfName.getText() + "','" + tfAddress.getText() + "','" + tfCity.getText() + "','" + tfState.getText() + "',"+ tfZip.getText() + ",'" + tfEmail.getText() + "','" + tfLicenseEffectiveDate.getValue() + "','" + expiry_date + "')";
         executeQuery(query);
         showAirlines();
         resetTextField();
     }
-
+    private LocalDate convertToExpiry(){
+        LocalDate d= tfLicenseEffectiveDate.getValue();
+        Integer dur = tfDuration.getValue();
+        tfDuration.setValue(dur);
+        Calendar cal = new GregorianCalendar();
+        cal.set(d.getYear(), d.getMonthValue(), d.getDayOfMonth());
+        cal.add(Calendar.MONTH,dur-1);
+        LocalDate expiry = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
+        return expiry;
+    }
     private void executeQuery(String query) {
         Connection conn = getConnection();
         Statement st;
@@ -308,6 +302,6 @@ public class airlineController {
     @FXML
     void initialize() {
         showAirlines();
+        tfDuration.setItems(durationList);
     }
-
 }

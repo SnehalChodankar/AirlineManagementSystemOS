@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" style="-fx-background-image: url(&quot;file:C:/Users/skchodankar/IdeaProjects/AirlineManagementSystemOS/images/bluebg.png&quot;); -fx-background-repeat: no-repeat; -fx-background-size: cover;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.airlineController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" style="-fx-background-image: url(&quot;file:C:/Users/aadwalpalkar/IdeaProjects/AIR/images/bluebg.png&quot;); -fx-background-repeat: no-repeat; -fx-background-size: cover;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.airlineController">
    <children>
       <VBox layoutX="-1.0" layoutY="14.0" prefHeight="500.0" prefWidth="1000.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -115,7 +116,7 @@
                                           <Insets bottom="4.0" top="2.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Licence Expiry Date" textFill="WHITE">
+                                    <Label text="Duration" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
@@ -166,7 +167,7 @@
                                        </VBox.margin>
                                     </TextField>
                                     <DatePicker fx:id="tfLicenseEffectiveDate" prefHeight="25.0" prefWidth="206.0" />
-                                    <DatePicker fx:id="tfLicenseExpiryDate" prefHeight="25.0" prefWidth="192.0" />
+                                    <ChoiceBox fx:id="tfDuration" prefHeight="25.0" prefWidth="96.0" />
                                  </children>
                                  <HBox.margin>
                                     <Insets right="10.0" top="10.0" />
