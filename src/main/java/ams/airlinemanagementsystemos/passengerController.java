@@ -202,6 +202,7 @@ public class passengerController {
         colMiddlename.setCellValueFactory(new PropertyValueFactory<Passengers, String>("Middle_Name"));
         colLastname.setCellValueFactory(new PropertyValueFactory<Passengers, String>("Last_Name"));
         colDOB.setCellValueFactory(new PropertyValueFactory<Passengers, LocalDate>("Passenger_DOB"));
+        colAge.setCellValueFactory(new PropertyValueFactory<Passengers,Integer>("age"));
 
         tvPassengers.setItems(list);
     }
