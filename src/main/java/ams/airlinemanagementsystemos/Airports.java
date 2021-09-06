@@ -9,13 +9,15 @@ public class Airports {
     private String Airport_Name;
     private String Airport_City;
     private String Airport_State;
+    private int Op_Status;
     private String Airline_Code;
 
-    public Airports(String airport_Code, String airport_Name, String airport_City, String airport_State) {
+    public Airports(String airport_Code, String airport_Name, String airport_City, String airport_State, int status) {
         this.Airport_Code = airport_Code;
         this.Airport_Name = airport_Name;
         this.Airport_City = airport_City;
         this.Airport_State = airport_State;
+        this.Op_Status = status;
     }
 
     public String getAirport_Code() {
@@ -34,4 +36,5 @@ public class Airports {
         return Airport_State;
     }
 
+    public int getOp_Status() { return Op_Status; }
 }

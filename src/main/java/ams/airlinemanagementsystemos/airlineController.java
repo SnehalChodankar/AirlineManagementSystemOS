@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class airlineController {
@@ -33,7 +35,7 @@ public class airlineController {
     private TableView<Airlines> tvAirlines;
 
     @FXML
-    private TableColumn<Airlines, Integer> colCode;
+    private TableColumn<Airlines, String> colCode;
 
     @FXML
     private TableColumn<Airlines, String> colName;
@@ -143,10 +145,23 @@ public class airlineController {
         //If the object is null, user didn't select any airline from the table.
         //If the object is not null, user has selected an airline and he can be redirected to airport.fxml
         if(airline == null){
-            System.out.println("Please select an airline to proceed to airport details.");
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            a.setContentText("Please select an airline to proceed to airport details.");
-            a.show();
+//            System.out.println("Please select an airline to proceed to airport details.");
+//            Alert a = new Alert(Alert.AlertType.ERROR);
+//            a.setContentText("Please select an airline to proceed to airport details.");
+//            a.show();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("airport.fxml"));
+            Parent root = loader.load();
+
+            //below two lines are used to pass the info from airline controller to airport controller
+            airportController airC = loader.getController();
+            airC.setAirline(null,9);
+            //airC.airlineCode=0;
+
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         }
         else {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("airport.fxml"));
@@ -154,7 +169,8 @@ public class airlineController {
 
             //below two lines are used to pass the info from airline controller to airport controller
             airportController airC = loader.getController();
-            airC.setAirline(airline.getAirline_Code());
+            airC.setAirline(airline.getAirline_Code(),airline.getOperational_Status());
+            //airC.airlineCode = airline.getAirline_Code();
 
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
@@ -245,7 +261,7 @@ public class airlineController {
 
         //query for retrieving all necessary information to display in GUI of the Airline Page
         String query = "SELECT `Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`," +
-                " `License_Issue`, `License_Expiry`" +
+                " `License_Issue`, `License_Expiry` ,`Operational_Status`" +
                 ",(" + FData_query + ") AS `Total_Flights`" +
                 ",(" + RData_query + ") AS `Flights_Today`" +
                 " FROM airline WHERE `Operational_Status` = "+status+"";
@@ -260,12 +276,12 @@ public class airlineController {
 
             while (rs.next())
             {
-               airlines = new Airlines(rs.getInt("Airline_Code"), rs.getString("Airline_Name"),
+               airlines = new Airlines(rs.getString("Airline_Code"), rs.getString("Airline_Name"),
                        rs.getString("Airline_Address"),rs.getString("Airline_City"),
                        rs.getString("Airline_State"), rs.getInt("Airline_Zip"),
                        rs.getString("Airline_Email"), rs.getDate("License_Issue"),
                        rs.getDate("License_Expiry"),rs.getInt("Total_Flights"),
-                       rs.getInt("Flights_Today"));
+                       rs.getInt("Flights_Today"),rs.getInt("Operational_Status"));
 
                airlineList.add(airlines);
             }
@@ -281,7 +297,7 @@ public class airlineController {
     public void showAirlines(int status){
         ObservableList<Airlines> list = getAirlinesList(status);
 
-        colCode.setCellValueFactory(new PropertyValueFactory<Airlines, Integer>("Airline_Code"));
+        colCode.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Code"));
         colName.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Name"));
         colAddress.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Address"));
         colCity.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_City"));
@@ -356,11 +372,13 @@ public class airlineController {
         else
             status = 1;
 
-        String query = "UPDATE airline SET Operational_Status="+status+" WHERE Airline_Code = "+tfCode.getText()+"";
+        String query = "UPDATE airline SET Operational_Status="+status+" WHERE Airline_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showAirlines(1);
         btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
         btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
         resetTextField();
     }
 
@@ -369,11 +387,13 @@ public class airlineController {
      * */
     private void renewLicense(){
         LocalDate expiry_date = convertToExpiry();
-        String query = "UPDATE airline SET License_Issue = '"+ dpLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = "+tfCode.getText()+"";
+        String query = "UPDATE airline SET License_Issue = '"+ dpLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showAirlines(1);
         btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
         btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
         resetTextField();
     }
 
@@ -381,12 +401,13 @@ public class airlineController {
      * updateAirlineRecord is used to update the information related to the selected airline.
      * */
     private void updateAirlineRecord() {
-        LocalDate expiry_date = convertToExpiry();
-        String query = "UPDATE airline SET Airline_Name = '"+ tfName.getText() + "', Airline_Address = '"+ tfAddress.getText() +"', Airline_City = '"+tfCity.getText()+"', Airline_State = '"+tfState.getText()+"', Airline_Zip = "+ Integer.parseInt(tfZip.getText()) +", Airline_Email = '"+ tfEmail.getText() +"', License_Issue = '"+ dpLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = "+tfCode.getText()+"";
+        String query = "UPDATE airline SET Airline_Name = '"+ tfName.getText() + "', Airline_Address = '"+ tfAddress.getText() +"', Airline_City = '"+tfCity.getText()+"', Airline_State = '"+tfState.getText()+"', Airline_Zip = "+ Integer.parseInt(tfZip.getText()) +", Airline_Email = '"+ tfEmail.getText() +"' WHERE Airline_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showAirlines(1);
         btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
         btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
         resetTextField();
     }
 
@@ -395,12 +416,27 @@ public class airlineController {
      * */
     private void insertAirlineRecord() {
         LocalDate expiry_date = convertToExpiry();
-        String query = "INSERT INTO airline (`Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`, `License_Issue`, `License_Expiry`) VALUES ("+ tfCode.getText() + ",'" + tfName.getText() + "','" + tfAddress.getText() + "','" + tfCity.getText() + "','" + tfState.getText() + "',"+ tfZip.getText() + ",'" + tfEmail.getText() + "','" + dpLicenseEffectiveDate.getValue() + "','" + expiry_date + "')";
-        executeQuery(query);
-        showAirlines(1);
-        btnShowActive.setVisible(false);
-        btnShowInactive.setVisible(true);
-        resetTextField();
+        LocalDate current_date = LocalDate.now();
+
+        if(current_date.isAfter(expiry_date))
+        {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setHeaderText("Invalid License");
+            a.setContentText("License is no longer valid,please check License Issue Date & Duration");
+            a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            a.show();
+        }
+
+        else {
+            String query = "INSERT INTO airline (`Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`, `License_Issue`, `License_Expiry`) VALUES ('" + tfCode.getText() + "','" + tfName.getText() + "','" + tfAddress.getText() + "','" + tfCity.getText() + "','" + tfState.getText() + "'," + tfZip.getText() + ",'" + tfEmail.getText() + "','" + dpLicenseEffectiveDate.getValue() + "','" + expiry_date + "')";
+            executeQuery(query);
+            showAirlines(1);
+            btnShowActive.setVisible(false);
+            btnShowActive.setManaged(false);
+            btnShowInactive.setVisible(true);
+            btnShowInactive.setManaged(true);
+            resetTextField();
+        }
     }
 
     /**
@@ -413,7 +449,7 @@ public class airlineController {
         Alert a = new Alert(Alert.AlertType.WARNING);
 
         if(src == btnAirlineInsert){
-            if(tfCode.getText() == "" || tfName.getText() == "" || tfAddress.getText() == "" || tfCity.getText() == "" || tfState.getText() == "" || tfZip.getText() == "" || tfEmail.getText() == "" || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
+            if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfAddress.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") || Objects.equals(tfZip.getText(), "") || Objects.equals(tfEmail.getText(), "") || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
                 a.setContentText("Please fill all the fields!!! ");
                 a.show();
                 return false;
@@ -425,7 +461,7 @@ public class airlineController {
             }
         }
         else if(src == btnAirlineUpdate){
-            if(tfCode.getText() == "" || tfName.getText() == "" || tfAddress.getText() == "" || tfCity.getText() == "" || tfState.getText() == "" || tfZip.getText() == "" || tfEmail.getText() == "" || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
+            if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfAddress.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") || Objects.equals(tfZip.getText(), "") || Objects.equals(tfEmail.getText(), "")){
                 a.setContentText("All fields are required. Check Help for more details.");
                 a.show();
                 return false;
@@ -437,7 +473,7 @@ public class airlineController {
             }
         }
         else if(src == btnAirlineLicenseRenew){
-            if(tfCode.getText()=="" || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
+            if(Objects.equals(tfCode.getText(), "") || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
                 a.setContentText("Please fill in the Airline Code.");
                 a.show();
                 return false;
@@ -447,7 +483,7 @@ public class airlineController {
                 a.show();
                 return false;
             }
-            else if(tfCode.getText() == ""){
+            else if(Objects.equals(tfCode.getText(), "")){
                 a.setContentText("Code/License Eff. Date/Duration is null!!!");
                 a.show();
                 return false;
@@ -475,15 +511,13 @@ public class airlineController {
      * */
     private boolean checkAirlineCode(String ACode) throws SQLException {
         Connection conn = getConnection();
-        String query = "SELECT * FROM airline WHERE Airline_Code="+ACode+"";
+        String query = "SELECT * FROM airline WHERE Airline_Code='"+ACode+"'";
         Statement st;
         ResultSet rs;
         st = conn.createStatement();
         rs = st.executeQuery(query);
 
-        if(rs.next() == true){
-            return true;
-        }
+        if(rs.next()) return true;
         else return false;
     }
 
@@ -517,14 +551,18 @@ public class airlineController {
     void showInactiveAirlines(ActionEvent event) {
         showAirlines(0);
         btnShowActive.setVisible(true);
+        btnShowActive.setManaged(true);
         btnShowInactive.setVisible(false);
+        btnShowInactive.setManaged(false);
     }
 
     @FXML
     void showActiveAirlines(ActionEvent event) {
         showAirlines(1);
         btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
         btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
     }
 
     @FXML
@@ -532,5 +570,6 @@ public class airlineController {
         showAirlines(1);
         cbDuration.setItems(durationList);
         btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
     }
 }

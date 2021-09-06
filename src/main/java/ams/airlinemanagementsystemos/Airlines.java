@@ -7,7 +7,7 @@ import java.time.Period;
 import java.time.ZoneId;
 
 public class Airlines {
-    private int Airline_Code;
+    private String Airline_Code;
     private String Airline_Name;
     private String Airline_Address;
     private String Airline_City;
@@ -22,8 +22,9 @@ public class Airlines {
     private int years;
     private int Total_Flights;
     private int Flights_Today;
+    private  int Operational_Status;
 
-    public Airlines(int airline_Code, String airline_Name, String airline_Address, String airline_City, String airline_State, int airline_Zip, String airline_Email, Date license_Issue, Date license_Expiry, int total_Flights, int flights_Today) {
+    public Airlines(String airline_Code, String airline_Name, String airline_Address, String airline_City, String airline_State, int airline_Zip, String airline_Email, Date license_Issue, Date license_Expiry, int total_Flights, int flights_Today, int operational_Status) {
         this.Airline_Code = airline_Code;
         this.Airline_Name = airline_Name;
         this.Airline_Address = airline_Address;
@@ -46,9 +47,11 @@ public class Airlines {
 
         this.Total_Flights=total_Flights;
         this.Flights_Today=flights_Today;
+
+        this.Operational_Status=operational_Status;
     }
 
-    public int getAirline_Code() {
+    public String getAirline_Code() {
         return Airline_Code;
     }
 
@@ -94,5 +97,9 @@ public class Airlines {
 
     public int getFlights_Today() {
         return Flights_Today;
+    }
+
+    public int getOperational_Status() {
+        return Operational_Status;
     }
 }

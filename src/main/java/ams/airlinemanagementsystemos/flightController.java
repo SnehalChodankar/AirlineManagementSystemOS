@@ -18,9 +18,9 @@ public class flightController {
     private Stage stage;
     private Scene scene;
 
-    public int airlineCode;
+    public String airlineCode;
 
-    public void setAirline(int acode){
+    public void setAirline(String acode){
         this.airlineCode = acode;
         System.out.println(airlineCode);
     }
