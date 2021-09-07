@@ -122,7 +122,7 @@ public class airportController {
 
     private boolean checkAirportCode(String ACode) throws SQLException {
         Connection conn = getConnection();
-        String query = "SELECT * FROM airport WHERE Airport_Code="+ACode+"";
+        String query = "SELECT * FROM airport WHERE Airport_Code='"+ACode+"'";
         Statement st;
         ResultSet rs;
         st = conn.createStatement();
@@ -136,8 +136,33 @@ public class airportController {
         Alert a = new Alert(Alert.AlertType.WARNING);
 
         if(src == btnAirportInsert){
+            boolean isAirportCode = tfCode.getText().chars().allMatch(Character::isLetterOrDigit);
+            boolean isAirportName = tfCode.getText().chars().allMatch(Character::isLetter);
+            boolean isCity = tfCode.getText().chars().allMatch(Character::isLetter);
+            boolean isState = tfCode.getText().chars().allMatch(Character::isLetter);
+
             if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") ){
                 a.setContentText("Please fill all the fields!!! ");
+                a.show();
+                return false;
+            }
+            else if(!isAirportCode){
+                a.setContentText("Invalid Airport Code!!!");
+                a.show();
+                return false;
+            }
+            else if(!isAirportName){
+                a.setContentText("Invalid Airport Name!!!");
+                a.show();
+                return false;
+            }
+            else if(!isCity){
+                a.setContentText("Invalid Airport City!!!");
+                a.show();
+                return false;
+            }
+            else if(!isState){
+                a.setContentText("Invalid Airport State!!!");
                 a.show();
                 return false;
             }
@@ -330,7 +355,7 @@ public class airportController {
     //Autofill data in the respective fields when an entry is clicked in the table
     void handleAirportCol(MouseEvent event) {
         Airports airports =  tvAirports.getSelectionModel().getSelectedItem();
-        tfCode.setText(""+airports.getAirport_Code());
+        tfCode.setText(airports.getAirport_Code());
         tfName.setText(airports.getAirport_Name());
         tfCity.setText(airports.getAirport_City());
         tfState.setText(airports.getAirport_State());

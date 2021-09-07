@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 public class airlineController {
     private Stage stage;
@@ -387,14 +388,25 @@ public class airlineController {
      * */
     private void renewLicense(){
         LocalDate expiry_date = convertToExpiry();
-        String query = "UPDATE airline SET License_Issue = '"+ dpLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = '"+tfCode.getText()+"'";
-        executeQuery(query);
-        showAirlines(1);
-        btnShowActive.setVisible(false);
-        btnShowActive.setManaged(false);
-        btnShowInactive.setVisible(true);
-        btnShowInactive.setManaged(true);
-        resetTextField();
+        LocalDate current_date = LocalDate.now();
+
+        if(current_date.isAfter(expiry_date)){
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setHeaderText("Invalid License");
+            a.setContentText("License is no longer valid,please check License Issue Date & Duration");
+            a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            a.show();
+        }
+        else{
+            String query = "UPDATE airline SET License_Issue = '"+ dpLicenseEffectiveDate.getValue() +"', License_Expiry = '"+ expiry_date +"' WHERE Airline_Code = '"+tfCode.getText()+"'";
+            executeQuery(query);
+            showAirlines(1);
+            btnShowActive.setVisible(false);
+            btnShowActive.setManaged(false);
+            btnShowInactive.setVisible(true);
+            btnShowInactive.setManaged(true);
+            resetTextField();
+        }
     }
 
     /**
@@ -449,16 +461,62 @@ public class airlineController {
         Alert a = new Alert(Alert.AlertType.WARNING);
 
         if(src == btnAirlineInsert){
+            boolean isAirlineCode = tfCode.getText().chars().allMatch(Character::isLetterOrDigit);
+            boolean isAirlineName = tfName.getText().chars().allMatch(Character::isLetter);
+            boolean isCity = tfCity.getText().chars().allMatch(Character::isLetter);
+            boolean isState = tfState.getText().chars().allMatch(Character::isLetter);
+            boolean isZip = tfZip.getText().chars().allMatch(Character::isDigit);
+
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+"[a-zA-Z0-9_+&*-]+)*@"+"(?:[a-zA-Z0-9-]+\\.)+[a-z"+"A-Z]{2,7}$";
+            Pattern pat = Pattern.compile(emailRegex);
+            boolean isEmail = pat.matcher(tfEmail.getText()).matches();
+
             if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfAddress.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") || Objects.equals(tfZip.getText(), "") || Objects.equals(tfEmail.getText(), "") || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
                 a.setContentText("Please fill all the fields!!! ");
                 a.show();
                 return false;
             }
-            else if(checkAirlineCode(tfCode.getText())){
-                a.setContentText("Airline already exists in the database.");
+            else if(!isAirlineCode){
+                a.setContentText("Invalid Airline Code!!!");
                 a.show();
                 return false;
             }
+            else if(!isAirlineName){
+                a.setContentText("Invalid Airline Name!!!");
+                a.show();
+                return false;
+            }
+            else if(!isCity){
+                a.setContentText("Invalid Airline City!!!");
+                a.show();
+                return false;
+            }
+            else if(!isState){
+                a.setContentText("Invalid Airline State!!!");
+                a.show();
+                return false;
+            }
+            else if(!isZip || tfZip.getText().length()>6){
+                a.setContentText("Invalid Airline Zip!!!");
+                a.show();
+                return false;
+            }
+            else if(!isEmail){
+                a.setContentText("Invalid Airline Email!!!");
+                a.show();
+                return false;
+            }
+            else if(checkAirlineCode(tfCode.getText())){
+                a.setContentText("Airline Code already exists in the database.");
+                a.show();
+                return false;
+            }
+            else if(checkAirlineName(tfName.getText())){
+                a.setContentText("Airline Name already exists in the database.");
+                a.show();
+                return false;
+            }
+
         }
         else if(src == btnAirlineUpdate){
             if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfAddress.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") || Objects.equals(tfZip.getText(), "") || Objects.equals(tfEmail.getText(), "")){
@@ -471,20 +529,20 @@ public class airlineController {
                 a.show();
                 return false;
             }
+            else if(checkAirlineName(tfName.getText())){
+                a.setContentText("Airline Name already exists in the database.");
+                a.show();
+                return false;
+            }
         }
         else if(src == btnAirlineLicenseRenew){
             if(Objects.equals(tfCode.getText(), "") || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
-                a.setContentText("Please fill in the Airline Code.");
+                a.setContentText("Missing Required data!!!.");
                 a.show();
                 return false;
             }
             else if(!checkAirlineCode(tfCode.getText())){
                 a.setContentText("Airline doesn't exists in the database.");
-                a.show();
-                return false;
-            }
-            else if(Objects.equals(tfCode.getText(), "")){
-                a.setContentText("Code/License Eff. Date/Duration is null!!!");
                 a.show();
                 return false;
             }
@@ -519,6 +577,29 @@ public class airlineController {
 
         if(rs.next()) return true;
         else return false;
+    }
+
+    private boolean checkAirlineName(String AName) throws SQLException {
+        Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
+        System.out.println("inside check");
+        if(Objects.equals(airline.getAirline_Name(), AName)){
+            System.out.println("Inside if");
+            return false;
+        }
+        else{
+            System.out.println("inside else");
+            Connection conn = getConnection();
+            String query = "SELECT * FROM airline WHERE Airline_Name='"+AName+"'";
+            Statement st;
+            ResultSet rs;
+            st = conn.createStatement();
+            rs = st.executeQuery(query);
+
+            if(rs.next()){
+                return true;
+            }
+            else return false;
+        }
     }
 
     /**
