@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="backgroundColor" stylesheets="@style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.routeController">
+   <children>
+      <TableView fx:id="tvRoutes" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleRouteCol" prefHeight="378.0" prefWidth="580.0">
+        <columns>
+          <TableColumn fx:id="colFlightCode" prefWidth="67.33331298828125" text="Flight Code" />
+          <TableColumn fx:id="colRouteId" prefWidth="56.0" text="Route ID" />
+            <TableColumn fx:id="colDeptartureDate" prefWidth="95.99996948242188" text="Departure Time" />
+            <TableColumn fx:id="colDepartureAirport" prefWidth="108.0" text="Departure Airport" />
+            <TableColumn fx:id="colArrivalDate" prefWidth="78.0" text="Arrival Time" />
+            <TableColumn fx:id="colArrivalAirport" minWidth="8.00006103515625" prefWidth="88.66668701171875" text="Arrival Airport" />
+            <TableColumn fx:id="colRouteStatus" prefWidth="85.3333740234375" text="Route Status" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

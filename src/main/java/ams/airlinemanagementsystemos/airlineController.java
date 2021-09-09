@@ -204,7 +204,7 @@ public class airlineController {
             Parent root = loader.load();
 
             flightController flightC = loader.getController();
-            flightC.setAirline(airline.getAirline_Code());
+            flightC.setAirline(airline.getAirline_Code(), airline.getAirline_Name());
 
             stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
@@ -258,7 +258,7 @@ public class airlineController {
 
         //query for retrieving total number of Flights active on the current day
         String RData_query="SELECT COUNT(DISTINCT`route`.`Flight_Code`) FROM route,flight" +
-                " WHERE route.Flight_Code=flight.Flight_Code AND `Carrier_Name`= `Airline_Name` AND DATE(`Departure_Date`) = DATE(NOW())";
+                " WHERE route.Flight_Code=flight.Flight_Code AND `Carrier_Name`= `Airline_Name` ";
 
         //query for retrieving all necessary information to display in GUI of the Airline Page
         String query = "SELECT `Airline_Code`, `Airline_Name`, `Airline_Address`, `Airline_City`, `Airline_State`, `Airline_Zip`, `Airline_Email`," +
@@ -343,6 +343,7 @@ public class airlineController {
         tfZip.setText(""+airlines.getAirline_Zip());
         tfEmail.setText(airlines.getAirline_Email());
         dpLicenseEffectiveDate.setValue(airlines.getLicense_Issue());
+        cbDuration.setValue(airlines.getMonths());
     }
 
     /**
@@ -459,17 +460,18 @@ public class airlineController {
      * */
     private boolean validationCheck(Object src) throws SQLException {
         Alert a = new Alert(Alert.AlertType.WARNING);
+        boolean isAirlineCode = tfCode.getText().chars().allMatch(Character::isLetterOrDigit);
+        boolean isAirlineName = tfName.getText().chars().allMatch(Character::isLetter);
+        boolean isCity = tfCity.getText().chars().allMatch(Character::isLetter);
+        boolean isState = tfState.getText().chars().allMatch(Character::isLetter);
+        boolean isZip = tfZip.getText().chars().allMatch(Character::isDigit);
+
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+"[a-zA-Z0-9_+&*-]+)*@"+"(?:[a-zA-Z0-9-]+\\.)+[a-z"+"A-Z]{2,7}$";
+        Pattern pat = Pattern.compile(emailRegex);
+        boolean isEmail = pat.matcher(tfEmail.getText()).matches();
 
         if(src == btnAirlineInsert){
-            boolean isAirlineCode = tfCode.getText().chars().allMatch(Character::isLetterOrDigit);
-            boolean isAirlineName = tfName.getText().chars().allMatch(Character::isLetter);
-            boolean isCity = tfCity.getText().chars().allMatch(Character::isLetter);
-            boolean isState = tfState.getText().chars().allMatch(Character::isLetter);
-            boolean isZip = tfZip.getText().chars().allMatch(Character::isDigit);
 
-            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+"[a-zA-Z0-9_+&*-]+)*@"+"(?:[a-zA-Z0-9-]+\\.)+[a-z"+"A-Z]{2,7}$";
-            Pattern pat = Pattern.compile(emailRegex);
-            boolean isEmail = pat.matcher(tfEmail.getText()).matches();
 
             if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfAddress.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") || Objects.equals(tfZip.getText(), "") || Objects.equals(tfEmail.getText(), "") || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
                 a.setContentText("Please fill all the fields!!! ");
@@ -526,6 +528,36 @@ public class airlineController {
             }
             else if(!checkAirlineCode(tfCode.getText())){
                 a.setContentText("Airline doesn't exists in the database.");
+                a.show();
+                return false;
+            }
+            else if(checkAirlineName(tfName.getText())){
+                a.setContentText("Airline Name already exists in the database.");
+                a.show();
+                return false;
+            }
+            else if(!isCity){
+                a.setContentText("Invalid Airline City!!!");
+                a.show();
+                return false;
+            }
+            else if(!isState){
+                a.setContentText("Invalid Airline State!!!");
+                a.show();
+                return false;
+            }
+            else if(!isZip || tfZip.getText().length()>6){
+                a.setContentText("Invalid Airline Zip!!!");
+                a.show();
+                return false;
+            }
+            else if(!isEmail){
+                a.setContentText("Invalid Airline Email!!!");
+                a.show();
+                return false;
+            }
+            else if(checkAirlineCode(tfCode.getText())){
+                a.setContentText("Airline Code already exists in the database.");
                 a.show();
                 return false;
             }

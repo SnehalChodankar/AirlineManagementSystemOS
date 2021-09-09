@@ -39,11 +39,12 @@ public class Airlines {
         this.License_Issue = licIss;
         this.License_Expiry = licExp;
 
-        this.days = Period.between(licIss, licExp).getDays();
         this.months = Period.between(licIss, licExp).getMonths();
         this.years = Period.between(licIss, licExp).getYears();
 
-        this.Duration = days+" Days, "+ months +" Months, "+ years +" Years";
+        this.months = months + this.years *12;
+
+        this.Duration = months +" Months";
 
         this.Total_Flights=total_Flights;
         this.Flights_Today=flights_Today;
@@ -101,5 +102,9 @@ public class Airlines {
 
     public int getOperational_Status() {
         return Operational_Status;
+    }
+
+    public int getMonths(){
+        return months;
     }
 }
