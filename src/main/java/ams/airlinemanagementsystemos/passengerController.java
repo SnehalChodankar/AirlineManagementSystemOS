@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -26,12 +27,7 @@ public class passengerController {
     private Stage stage;
     private Scene scene;
 
-    public int airlineCode;
-
-    public void setAirline(int acode){
-        this.airlineCode = acode;
-        System.out.println(airlineCode);
-    }
+    private int PassengerCode;
 
     @FXML
     private ResourceBundle resources;
@@ -61,9 +57,6 @@ public class passengerController {
     private TableColumn<Passengers, Integer> colAge;
 
     @FXML
-    private TextField tfCode;
-
-    @FXML
     private TextField tfFirstname;
 
     @FXML
@@ -84,6 +77,30 @@ public class passengerController {
     @FXML
     private Button btnPassengerDelete;
 
+    @FXML
+    private Button btnShowActive;
+
+    @FXML
+    private Button btnShowInactive;
+
+    @FXML
+    void showActivePassengers(ActionEvent event) {
+        showPassengers(1);
+        btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
+        btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
+    }
+
+    @FXML
+    void showInactivePassengers(ActionEvent event) {
+        showPassengers(0);
+        btnShowActive.setVisible(true);
+        btnShowActive.setManaged(true);
+        btnShowInactive.setVisible(false);
+        btnShowInactive.setManaged(false);
+    }
+
     public void resetTextField(){
         tfFirstname.setText("");
         tfMiddlename.setText("");
@@ -103,11 +120,12 @@ public class passengerController {
     @FXML
     void handlePassengerCol(MouseEvent event) {
         Passengers passenger =  tvPassengers.getSelectionModel().getSelectedItem();
-        tfCode.setText(""+passenger.getPassenger_Code());
         tfFirstname.setText(passenger.getFirst_Name());
         tfMiddlename.setText(passenger.getMiddle_Name());
         tfLastname.setText(passenger.getLast_Name());
         tfDOB.setValue(passenger.getPassenger_DOB());
+
+        PassengerCode = passenger.getPassenger_Code();
     }
 
     @FXML
@@ -121,35 +139,114 @@ public class passengerController {
 
     @FXML
     void handleBtnIUDAction(ActionEvent event) {
-        if(event.getSource() == btnPassengerInsert){
-            insertPassengerRecord();
-        }
-        else if(event.getSource() == btnPassengerUpdate){
-            updatePassengerRecord();
-        }
-        else if(event.getSource() == btnPassengerDelete){
-            deletePassengerRecord();
+        if(validationCheck(event.getSource())) {
+            if (event.getSource() == btnPassengerInsert) {
+                insertPassengerRecord();
+            } else if (event.getSource() == btnPassengerUpdate) {
+                updatePassengerRecord();
+            } else if (event.getSource() == btnPassengerDelete) {
+                deletePassengerRecord();
+            }
         }
     }
 
+    private boolean validationCheck(Object source) {
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        boolean isPassengerFName = tfFirstname.getText().chars().allMatch(Character::isLetter);
+        boolean isPassengerMName = tfMiddlename.getText().chars().allMatch(Character::isLetter);
+        boolean isPassengerLName = tfLastname.getText().chars().allMatch(Character::isLetter);
+
+        if(source == btnPassengerInsert){
+            if(Objects.equals(tfFirstname.getText(), "") || Objects.equals(tfMiddlename.getText(), "") || Objects.equals(tfLastname.getText(), "") || Objects.equals(tfDOB.getValue(), null)){
+                a.setContentText("Please fill all the fields!!! ");
+                a.show();
+                return false;
+            }
+            else if(!isPassengerFName){
+                a.setHeaderText("Invalid Passenger First Name!!!");
+                a.setContentText("Please enter a valid name.");
+                a.show();
+                return false;
+            }
+            else if(!isPassengerMName){
+                a.setHeaderText("Invalid Passenger Middle Name!!!");
+                a.setContentText("Please enter a valid name.");
+                a.show();
+                return false;
+            }
+            else if(!isPassengerLName){
+                a.setHeaderText("Invalid Passenger Last Name!!!");
+                a.setContentText("Please enter a valid name.");
+                a.show();
+                return false;
+            }
+        }
+        else if(source == btnPassengerUpdate){
+            if(Objects.equals(tfFirstname.getText(), "") || Objects.equals(tfMiddlename.getText(), "") || Objects.equals(tfLastname.getText(), "") || Objects.equals(tfDOB.getValue(), null)){
+                a.setContentText("All the fields are required!!! ");
+                a.show();
+                return false;
+            }
+            else if(!isPassengerFName){
+                a.setHeaderText("Invalid Passenger First Name!!!");
+                a.setContentText("Please enter a valid name.");
+                a.show();
+                return false;
+            }
+            else if(!isPassengerMName){
+                a.setHeaderText("Invalid Passenger Middle Name!!!");
+                a.setContentText("Please enter a valid name.");
+                a.show();
+                return false;
+            }
+            else if(!isPassengerLName){
+                a.setHeaderText("Invalid Passenger Last Name!!!");
+                a.setContentText("Please enter a valid name.");
+                a.show();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void deletePassengerRecord() {
-        String query = "DELETE FROM passenger WHERE Passenger_Code = "+tfCode.getText()+"";
+        int status;
+        if(btnShowInactive.isVisible())
+            status = 0;
+        else
+            status = 1;
+
+        String query = "UPDATE passenger SET Account_Status="+status+" WHERE Passenger_Code = "+PassengerCode+"";
         executeQuery(query);
-        showPassengers();
+        showPassengers(1);
+        btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
+        btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
         resetTextField();
     }
 
     private void updatePassengerRecord() {
-        String query = "UPDATE passenger SET First_Name = '"+ tfFirstname.getText() + "', Middle_Name = '"+ tfMiddlename.getText() +"', Last_Name = '"+tfLastname.getText()+"', Passenger_DOB = '"+tfDOB.getValue()+"' WHERE Passenger_Code = "+tfCode.getText()+"";
+        String query = "UPDATE passenger SET First_Name = '"+ tfFirstname.getText() + "', Middle_Name = '"+ tfMiddlename.getText() +"', Last_Name = '"+tfLastname.getText()+"', Passenger_DOB = '"+tfDOB.getValue()+"' WHERE Passenger_Code = "+PassengerCode+"";
         executeQuery(query);
-        showPassengers();
+        showPassengers(1);
+        btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
+        btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
+
         resetTextField();
     }
 
     private void insertPassengerRecord() {
         String query = "INSERT INTO `passenger`(`First_Name`, `Middle_Name`, `Last_Name`, `Passenger_DOB`) VALUES ('"+ tfFirstname.getText() + "','" + tfMiddlename.getText() + "','" + tfLastname.getText() + "','" + tfDOB.getValue() + "')";
         executeQuery(query);
-        showPassengers();
+        showPassengers(1);
+        btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
+        btnShowInactive.setVisible(true);
+        btnShowInactive.setManaged(true);
         resetTextField();
     }
 
@@ -177,10 +274,10 @@ public class passengerController {
         }
     }
 
-    public ObservableList<Passengers> getPassengersList(){
+    public ObservableList<Passengers> getPassengersList(int Acc_Status){
         ObservableList<Passengers> passengersList = FXCollections.observableArrayList();
         Connection conn = getConnection();
-        String query = "SELECT * FROM passenger";
+        String query = "SELECT * FROM passenger WHERE Account_Status="+Acc_Status+"";
         Statement st;
         ResultSet rs;
 
@@ -200,8 +297,8 @@ public class passengerController {
         return passengersList;
     }
 
-    public void showPassengers(){
-        ObservableList<Passengers> list = getPassengersList();
+    public void showPassengers(int Acc_Status){
+        ObservableList<Passengers> list = getPassengersList(Acc_Status);
 
         colCode.setCellValueFactory(new PropertyValueFactory<Passengers, Integer>("Passenger_Code"));
         colFirstname.setCellValueFactory(new PropertyValueFactory<Passengers, String>("First_Name"));
@@ -215,6 +312,8 @@ public class passengerController {
 
     @FXML
     void initialize() {
-        showPassengers();
+        showPassengers(1);
+        btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
     }
 }

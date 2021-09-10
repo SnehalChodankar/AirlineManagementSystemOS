@@ -326,7 +326,6 @@ public class flightController {
                 return false;
             }
         }
-
         return true;
     }
 
