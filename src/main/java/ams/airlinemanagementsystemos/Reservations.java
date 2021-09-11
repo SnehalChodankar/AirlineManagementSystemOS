@@ -3,16 +3,18 @@ package ams.airlinemanagementsystemos;
 public class Reservations {
     private int Reservation_Code;
     private int Passenger_Code;
-    private String Flight_Class;
+    private int Route_ID;
+    private String FlightClass;
     private double Fare;
-    private boolean Status;
+    private int Reservation_Status;
 
-    public Reservations(int reservation_Code, int passenger_Code, String flight_Class, double fare, boolean status) {
-        Reservation_Code = reservation_Code;
-        Passenger_Code = passenger_Code;
-        Flight_Class = flight_Class;
-        Fare = fare;
-        Status = status;
+    public Reservations(int reservation_Code, int passenger_Code, int route_ID, String aClass, double fare, int reservation_Status) {
+        this.Reservation_Code = reservation_Code;
+        this.Passenger_Code = passenger_Code;
+        this.Route_ID = route_ID;
+        this.FlightClass = aClass;
+        this.Fare = fare;
+        this.Reservation_Status = reservation_Status;
     }
 
     public int getReservation_Code() {
@@ -23,15 +25,19 @@ public class Reservations {
         return Passenger_Code;
     }
 
-    public String getFlight_Class() {
-        return Flight_Class;
+    public int getRoute_ID() {
+        return Route_ID;
+    }
+
+    public String getFlightClass() {
+        return FlightClass;
     }
 
     public double getFare() {
         return Fare;
     }
 
-    public boolean isStatus() {
-        return Status;
+    public int getReservation_Status() {
+        return Reservation_Status;
     }
 }

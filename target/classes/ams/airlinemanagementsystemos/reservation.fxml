@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,25 +12,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" style="-fx-background-image: url(&quot;file:C:/Users/fdagama/IdeaProjects/AirlineManagementSystemOS/images/bluebg.png&quot;); -fx-background-repeat: no-repeat; -fx-background-size: cover;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.reservationController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" styleClass="backgroundColor" stylesheets="@style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.reservationController">
    <children>
       <VBox layoutX="-1.0" layoutY="14.0" prefHeight="532.0" prefWidth="1000.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox prefHeight="455.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
                <children>
-                  <TableView prefHeight="389.0" prefWidth="579.0" HBox.hgrow="ALWAYS">
+                  <TableView fx:id="tvReservations" onMouseClicked="#handleReservationCol" prefHeight="389.0" prefWidth="579.0" HBox.hgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="colCode" minWidth="0.0" prefWidth="82.00000286102295" text="Code" />
-                        <TableColumn fx:id="colName" minWidth="0.0" prefWidth="0.0" text="Name" />
-                        <TableColumn fx:id="colPassengerid" prefWidth="113.99999237060547" text="Passenger ID" />
-                        <TableColumn fx:id="colFlightcode" minWidth="0.0" prefWidth="71.33331298828125" text="Flight Code" />
-                        <TableColumn fx:id="colDepartureairport" minWidth="0.0" prefWidth="73.33331298828125" text="Departure Airport" />
-                        <TableColumn fx:id="colDeparturedate" prefWidth="75.0" text="Departure Date" />
-                        <TableColumn fx:id="colArrivalairport" prefWidth="95.33331298828125" text="Arrival Airport" />
-                        <TableColumn prefWidth="75.0" text="Arrival Date" />
-                        <TableColumn fx:id="colClass" prefWidth="69.33331298828125" text="Class" />
-                        <TableColumn fx:id="colFare" prefWidth="56.0" text="Fare" />
-                        <TableColumn fx:id="colStatus" prefWidth="54.0" text="Status" />
+                        <TableColumn fx:id="colCode" minWidth="0.0" prefWidth="121.99999523162842" text="Reservation ID" />
+                        <TableColumn fx:id="colPassengerId" prefWidth="136.00001525878906" text="Passenger ID" />
+                        <TableColumn fx:id="colRouteId" prefWidth="109.99993896484375" text="Route ID" />
+                        <TableColumn fx:id="colClass" prefWidth="150.00003051757812" text="Class" />
+                        <TableColumn fx:id="colFare" minWidth="0.0" prefWidth="91.99993896484375" text="Fare" />
                      </columns>
                      <HBox.margin>
                         <Insets left="10.0" right="10.0" top="10.0" />
@@ -59,14 +52,6 @@
                                           <Insets bottom="4.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Departure Date" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets bottom="4.0" />
-                                       </VBox.margin>
-                                    </Label>
                                     <Label text="Departure Airport" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
@@ -87,6 +72,9 @@
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
+                                       <VBox.margin>
+                                          <Insets bottom="35.0" />
+                                       </VBox.margin>
                                     </Label>
                                     <Label text="Flight Code" textFill="WHITE">
                                        <font>
@@ -96,12 +84,20 @@
                                           <Insets bottom="4.0" top="1.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Arrival Date" textFill="WHITE">
+                                    <Label text="Departure Time" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="3.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Label text="Arrival Time" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets bottom="4.0" />
+                                          <Insets bottom="3.0" />
                                        </VBox.margin>
                                     </Label>
                                     <Label text="Class" textFill="WHITE">
@@ -109,7 +105,7 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets bottom="4.0" top="2.0" />
+                                          <Insets bottom="3.0" />
                                        </VBox.margin>
                                     </Label>
                                     <Label text="Fare" textFill="WHITE">
@@ -117,13 +113,8 @@
                                           <Font name="System Bold" size="15.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets bottom="4.0" />
+                                          <Insets />
                                        </VBox.margin>
-                                    </Label>
-                                    <Label text="Status" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="15.0" />
-                                       </font>
                                     </Label>
                                  </children>
                                  <HBox.margin>
@@ -137,15 +128,24 @@
                                           <Insets />
                                        </VBox.margin>
                                     </TextField>
-                                    <DatePicker fx:id="tfDeparturedate" prefHeight="25.0" prefWidth="205.0" />
-                                    <ChoiceBox fx:id="tfDepartureairport" prefHeight="25.0" prefWidth="200.0" />
-                                    <ChoiceBox fx:id="tfArrivalairport" prefHeight="25.0" prefWidth="202.0" />
-                                    <ChoiceBox fx:id="tfAirline" prefHeight="25.0" prefWidth="201.0" />
-                                    <ChoiceBox fx:id="tfFlightcode" prefHeight="25.0" prefWidth="201.0" />
-                                    <DatePicker fx:id="tfArrivaldate" prefHeight="25.0" prefWidth="200.0" />
-                                    <ChoiceBox fx:id="tfClass" prefHeight="25.0" prefWidth="203.0" />
-                                    <TextField fx:id="tfFare" />
-                                    <ChoiceBox fx:id="tfStatus" prefHeight="25.0" prefWidth="200.0" />
+                                    <ChoiceBox fx:id="cbDepartureAirport" prefHeight="25.0" prefWidth="200.0" />
+                                    <ChoiceBox fx:id="cbArrivalAirport" prefHeight="25.0" prefWidth="201.0" />
+                                    <ChoiceBox fx:id="cbAirline" prefHeight="25.0" prefWidth="202.0" />
+                                    <Button fx:id="btnCheckFlights" mnemonicParsing="false" onAction="#checkFlightsAction" text="Check Flights" />
+                                    <TextField fx:id="tfFlightCode" editable="false" />
+                                    <TextField fx:id="tfDepartureTime" editable="false" />
+                                    <TextField fx:id="tfArrivalTime" editable="false" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <ChoiceBox fx:id="cbClass" prefHeight="25.0" prefWidth="113.0" />
+                                          <Button mnemonicParsing="false" onAction="#handleCalcFare" text="Calc. Fare">
+                                             <HBox.margin>
+                                                <Insets left="20.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <TextField fx:id="tfFare" editable="false" />
                                  </children>
                                  <HBox.margin>
                                     <Insets right="10.0" top="10.0" />
@@ -155,9 +155,8 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Insert" />
-                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Update" />
-                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Delete" />
+                              <Button fx:id="btnReservationInsert" mnemonicParsing="false" onAction="#handleIUDAction" prefHeight="30.0" prefWidth="70.0" text="Insert" />
+                              <Button fx:id="btnReservationCancel" mnemonicParsing="false" onAction="#handleIUDAction" prefHeight="30.0" prefWidth="134.0" text="Cancel Reservation" />
                            </children>
                            <VBox.margin>
                               <Insets top="10.0" />
