@@ -219,14 +219,7 @@ public class airportController {
     }
 
     private void changeStatusAirportRecord() {
-        Airports airport =  tvAirports.getSelectionModel().getSelectedItem();
-        int status;
-        if(airport.getOp_Status() == 1)
-            status = 0;
-        else
-            status = 1;
-
-        String query = "UPDATE airport SET Operational_Status = "+status+" WHERE Airport_Code = '"+tfCode.getText()+"'";
+        String query = "UPDATE airport SET Operational_Status = Operational_Status ^ 1 WHERE Airport_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
 
 //        query = "Update airline_airport_association set Flag = 0 WHERE Airport_Code = '"+tfCode.getText()+"'";

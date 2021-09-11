@@ -211,13 +211,8 @@ public class passengerController {
     }
 
     private void deletePassengerRecord() {
-        int status;
-        if(btnShowInactive.isVisible())
-            status = 0;
-        else
-            status = 1;
 
-        String query = "UPDATE passenger SET Account_Status="+status+" WHERE Passenger_Code = "+PassengerCode+"";
+        String query = "UPDATE passenger SET Account_Status= Account_Status ^ 1 WHERE Passenger_Code = "+PassengerCode+"";
         executeQuery(query);
         showPassengers(1);
         btnShowActive.setVisible(false);

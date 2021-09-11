@@ -186,14 +186,21 @@ public class flightController {
             ex.printStackTrace();
         }
 
-        int hour=route.getDeparture_Date().getHours();
+        int hour = route.getDeparture_Date().getHours();
         int minute = route.getDeparture_Date().getMinutes();
         String time= "AM";
 
-        if(hour>12){
-            hour = hour-12;
-            time="PM";
+        if(hour==00)
+        {
+            hour = hour+12;
         }
+        else if(hour>=12){
+            time="PM";
+            if(hour>12){
+                hour = hour-12;
+            }
+        }
+
         cbDepartureHour.setValue(hour);
         cbDepartureMinute.setValue(minute);
         cbDepartureTime.setValue(time);
@@ -202,10 +209,17 @@ public class flightController {
         minute = route.getArrival_Date().getMinutes();
         time = "AM";
 
-        if(hour>12){
-            hour = hour-12;
-            time="PM";
+        if(hour==00)
+        {
+            hour = hour+12;
         }
+        else if(hour>=12){
+            time="PM";
+            if(hour>12){
+                hour = hour-12;
+            }
+        }
+
         cbArrivalHour.setValue(hour);
         cbArrivalMinute.setValue(minute);
         cbArrivalTime.setValue(time);
@@ -367,13 +381,7 @@ public class flightController {
     }
 
     private void softDeleteFlightRecord() {
-        int status;
-        if(btnShowInactive.isVisible())
-            status = 0;
-        else
-            status = 1;
-
-        String query = "UPDATE flight SET Availability="+status+" WHERE Flight_Code = '"+tfCode.getText()+"'";
+        String query = "UPDATE flight SET Availability=Availability ^ 1 WHERE Flight_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showFlights(1);
         btnShowActive.setVisible(false);
@@ -404,25 +412,31 @@ public class flightController {
             a.show();
         }
         else{
-            int hours = cbDepartureHour.getValue();
-            int minutes = cbDepartureMinute.getValue();
+            int hour = cbDepartureHour.getValue();
+            int minute = cbDepartureMinute.getValue();
             String time = cbDepartureTime.getValue();
 
-            if(Objects.equals(time, "PM")){
-                hours = hours+12;
+            if(Objects.equals(time, "PM") && hour!=12){
+                hour = hour+12;
             }
-            String dept_time = hours+":"+minutes+":00";
+            if(Objects.equals(time, "AM") && hour==12){
+                hour = hour-12;
+            }
+            String dept_time = hour+":"+minute+":00";
             java.sql.Time departureTime = java.sql.Time.valueOf(dept_time);
 
-            int hoursA = cbArrivalHour.getValue();
-            int minuteA = cbArrivalMinute.getValue();
-            String timeA = cbArrivalTime.getValue();
+            hour = cbArrivalHour.getValue();
+            minute = cbArrivalMinute.getValue();
+            time = cbArrivalTime.getValue();
 
-            if(Objects.equals(timeA, "PM")){
-                hoursA = hoursA+12;
+            if(Objects.equals(time, "PM") && hour!=12){
+                hour = hour+12;
+            }
+            if(Objects.equals(time, "AM") && hour==12){
+                hour = hour-12;
             }
 
-            String arr_time = hours+":"+minutes+":00";
+            String arr_time = hour+":"+minute+":00";
             java.sql.Time arrivalTime = java.sql.Time.valueOf(arr_time);
 
             String departureAirport = getAirportCode(cbDepartsFrom.getValue());
@@ -444,25 +458,31 @@ public class flightController {
             a.show();
         }
         else{
-            int hours = cbDepartureHour.getValue();
-            int minutes = cbDepartureMinute.getValue();
+            int hour = cbDepartureHour.getValue();
+            int minute = cbDepartureMinute.getValue();
             String time = cbDepartureTime.getValue();
 
-            if(Objects.equals(time, "PM")){
-                hours = hours+12;
+            if(Objects.equals(time, "PM") && hour!=12){
+                hour = hour+12;
             }
-            String dept_time = hours+":"+minutes+":00";
+            if(Objects.equals(time, "AM") && hour==12){
+                hour = hour-12;
+            }
+            String dept_time = hour+":"+minute+":00";
             java.sql.Time departureTime = java.sql.Time.valueOf(dept_time);
 
-            int hoursA = cbArrivalHour.getValue();
-            int minutesA = cbArrivalMinute.getValue();
-            String timeA = cbArrivalTime.getValue();
+            hour = cbArrivalHour.getValue();
+            minute = cbArrivalMinute.getValue();
+            time = cbArrivalTime.getValue();
 
-            if(Objects.equals(timeA, "PM")){
-                hoursA = hoursA+12;
+            if(Objects.equals(time, "PM") && hour!=12){
+                hour = hour+12;
+            }
+            if(Objects.equals(time, "AM") && hour==12){
+                hour = hour-12;
             }
 
-            String arr_time = hoursA+":"+minutesA+":00";
+            String arr_time = hour+":"+minute+":00";
             java.sql.Time arrivalTime = java.sql.Time.valueOf(arr_time);
 
             String departureAirport = getAirportCode(cbDepartsFrom.getValue());
@@ -482,7 +502,7 @@ public class flightController {
             a.show();
         }
         else{
-            String query = "UPDATE route SET Route_Status= Route_ID="+routeId+"";
+            String query = "UPDATE route SET Route_Status=Route_Status ^ 1 WHERE Route_ID="+routeId+"";
             executeQuery(query);
             showFlights(1);
         }

@@ -277,14 +277,14 @@ public class airlineController {
 
             while (rs.next())
             {
-               airlines = new Airlines(rs.getString("Airline_Code"), rs.getString("Airline_Name"),
-                       rs.getString("Airline_Address"),rs.getString("Airline_City"),
-                       rs.getString("Airline_State"), rs.getInt("Airline_Zip"),
-                       rs.getString("Airline_Email"), rs.getDate("License_Issue"),
-                       rs.getDate("License_Expiry"),rs.getInt("Total_Flights"),
-                       rs.getInt("Flights_Today"),rs.getInt("Operational_Status"));
+                airlines = new Airlines(rs.getString("Airline_Code"), rs.getString("Airline_Name"),
+                        rs.getString("Airline_Address"),rs.getString("Airline_City"),
+                        rs.getString("Airline_State"), rs.getInt("Airline_Zip"),
+                        rs.getString("Airline_Email"), rs.getDate("License_Issue"),
+                        rs.getDate("License_Expiry"),rs.getInt("Total_Flights"),
+                        rs.getInt("Flights_Today"),rs.getInt("Operational_Status"));
 
-               airlineList.add(airlines);
+                airlineList.add(airlines);
             }
         }catch (Exception ex){
             ex.printStackTrace();
@@ -368,13 +368,8 @@ public class airlineController {
      * softDeleteAirlineRecord is used to change the operational status column in the database to 0 and vise versa.
      * */
     private void softDeleteAirlineRecord() {
-        int status;
-        if(btnShowInactive.isVisible())
-            status = 0;
-        else
-            status = 1;
 
-        String query = "UPDATE airline SET Operational_Status="+status+" WHERE Airline_Code = '"+tfCode.getText()+"'";
+        String query = "UPDATE airline SET Operational_Status= Operational_Status ^ 1 WHERE Airline_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showAirlines(1);
         btnShowActive.setVisible(false);
@@ -644,7 +639,7 @@ public class airlineController {
         Calendar cal = new GregorianCalendar();
         cal.set(d.getYear(), d.getMonthValue(), d.getDayOfMonth());
         cal.add(Calendar.MONTH,dur-1);                  //duration - 1 since Calendar Object stores months as 1 index less(0-11)
-                                                               //i.e. Month 7 Entered into Calendar will be seen as Month 8 by the Calendar
+        //i.e. Month 7 Entered into Calendar will be seen as Month 8 by the Calendar
         LocalDate expiry = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
         return expiry;
     }
