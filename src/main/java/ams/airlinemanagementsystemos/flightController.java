@@ -598,7 +598,7 @@ public class flightController {
 
         while (rs.next())
         {
-            if((DTime.after(rs.getTime("Departure_Time")) || DTime.equals(rs.getTime("Departure_Time"))) && (DTime.after(rs.getTime("Arrival_Time")) || DTime.equals(rs.getTime("Arrival_Time"))))
+            if((DTime.after(rs.getTime("Departure_Time")) || DTime.equals(rs.getTime("Departure_Time"))) && (DTime.before(rs.getTime("Arrival_Time")) || DTime.equals(rs.getTime("Arrival_Time"))))
             {
                 return true;
             }
