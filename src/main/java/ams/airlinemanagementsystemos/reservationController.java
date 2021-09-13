@@ -5,9 +5,11 @@ import java.net.URL;
 import java.sql.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -337,6 +339,39 @@ public class reservationController {
         fillChoiceBoxes();
 
         cbClass.setItems(flightClasses);
+
+        cbArrivalAirport.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFlightCode.setText(null);
+                    tfFare.setText(null);
+                    tfArrivalTime.setText(null);
+                    tfDepartureTime.setText(null);
+                } );
+
+        cbDepartureAirport.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFlightCode.setText(null);
+                    tfFare.setText(null);
+                    tfArrivalTime.setText(null);
+                    tfDepartureTime.setText(null);
+                } );
+
+        cbAirline.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFlightCode.setText(null);
+                    tfFare.setText(null);
+                    tfArrivalTime.setText(null);
+                    tfDepartureTime.setText(null);
+                } );
+
+        cbClass.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFare.setText(null);
+                } );
     }
 
     private void fillChoiceBoxes() {
