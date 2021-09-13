@@ -10,24 +10,50 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import java.io.IOException;
-import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
-import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+/**
+ * airlineController is used to handle various functionalities associated with respect to airline,
+ * like for example, insert, update airline details, renew license, change status.
+ * airlineController is also used to execute the functiality to go to other pages like, airport page,
+ * flights page and passenger details page.
+ *
+ * Methods defined in airlineController:
+ * - onBackAction(ActionEvent event);               returns void
+ * - goToAirports(ActionEvent event);               returns void
+ * - goToFlights(ActionEvent event);                returns void
+ * - goToPassengers(ActionEvent event);             returns void
+ * - getConnection();                               returns Connection
+ * - getAirlinesList(int status);                   returns ObservableList<Airlines>
+ * - showAirlines(int status);                      returns void
+ * - resetTextField();                              returns void
+ * - handleAirlineCol(MouseEvent event);            returns void
+ * - handleBtnIUDAction(ActionEvent event);         returns void
+ * - softDeleteAirlineRecord();                     returns void
+ * - renewLicense();                                returns void
+ * - updateAirlineRecord();                         returns void
+ * - insertAirlineRecord();                         returns void
+ * - validationCheck(Object src);                   returns boolean
+ * - checkAirlineCode(String ACode);                returns boolean
+ * - checkAirlineName(String AName);                returns boolean
+ * - convertToExpiry();                             returns LocalDate
+ * - executeQuery(String query);                    returns void
+ * - showInactiveAirlines(ActionEvent event);       returns void
+ * - showActiveAirlines(ActionEvent event);         returns void
+ * - initialize();                                  returns void
+ * */
 public class airlineController {
     private Stage stage;
     private Scene scene;
@@ -138,8 +164,8 @@ public class airlineController {
     private Button btnBack;
 
     /**
-     * onBackAction function activates when user clicks on Back button in airline.fxml.
-     * This takes the user back to the main.fxml page.
+     * onBackAction function activates when user clicks on logout button in airline.fxml.
+     * This takes the user back to the main.fxml page where user must login again to view airline.fxml.
      * */
     @FXML
     void onBackAction(ActionEvent event) throws IOException {
@@ -152,10 +178,11 @@ public class airlineController {
 
     /**
      * goToAirports is initiated when user clicks on Airport button.
-     * But the user won't be redirected to airport.fxml unless he chooses a specific airline
-     * from the table.
-     * Once the airline is choosen, it is highlighted in the table, and then when user clicks on Airports
-     * button, he will be directed to airport.fxml page.
+     * If an airline is not selected from the table, and user clicks on airport page, he will be
+     * redirected to airport page where he can see all the airports that are registered into the system.
+     * Once the airline is chosen, it is highlighted in the table, and then when user clicks on Airports
+     * button, he will be directed to airport.fxml page where airports which are associated with selected
+     * airline are displayed.
      * */
     @FXML
     void goToAirports(ActionEvent event) throws IOException {
@@ -175,7 +202,6 @@ public class airlineController {
             //below two lines are used to pass the info from airline controller to airport controller
             airportController airC = loader.getController();
             airC.setAirline(null,9);
-            //airC.airlineCode=0;
 
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
@@ -189,7 +215,6 @@ public class airlineController {
             //below two lines are used to pass the info from airline controller to airport controller
             airportController airC = loader.getController();
             airC.setAirline(airline.getAirline_Code(),airline.getOperational_Status());
-            //airC.airlineCode = airline.getAirline_Code();
 
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
@@ -204,7 +229,6 @@ public class airlineController {
      * from the table.
      * Once the airline is choosen, it is highlighted in the table, and then when user clicks on Flights
      * button, he will be directed to flight.fxml page.
-     *
      * The checks and steps are same as goToAirport function above.
      * */
     @FXML
@@ -213,6 +237,7 @@ public class airlineController {
 
         if(airline == null){
             Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setHeaderText("Cannot Proceed to Flights!!!");
             a.setContentText("Please select an airline to proceed to flights details.");
             a.show();
         }
@@ -248,18 +273,16 @@ public class airlineController {
     /**
      * getConnection function is used to connect to the mysql database with the default root credentials.
      * */
-    public Connection getConnection(){
-        Connection conn;
+    public Connection getConnection() throws SQLException {
+        Connection conn = null;
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ams", "root", "");
-            System.out.println("Connected to db!!!");
             return conn;
         }
         catch (Exception ex){
-            System.out.println("Error: "+ ex.getMessage());
+            ex.printStackTrace();
             return null;
         }
-
     }
 
     /**
@@ -267,7 +290,7 @@ public class airlineController {
      * from the Airline table.
      * This function returns this list as OberservableList whenever called.
      * */
-    public ObservableList<Airlines> getAirlinesList(int status){
+    public ObservableList<Airlines> getAirlinesList(int status) throws SQLException {
         ObservableList<Airlines> airlineList = FXCollections.observableArrayList();
         Connection conn = getConnection();
 
@@ -313,7 +336,7 @@ public class airlineController {
     /**
      * showAirlines function is used to fill the table with airline details.
      * */
-    public void showAirlines(int status){
+    public void showAirlines(int status) throws SQLException {
         ObservableList<Airlines> list = getAirlinesList(status);
 
         colCode.setCellValueFactory(new PropertyValueFactory<Airlines, String>("Airline_Code"));
@@ -348,7 +371,7 @@ public class airlineController {
 
     /**
      * handleAirlineCol is used to fill in the textfields with the data system gets after user selects
-     * a perticular airline.
+     * a particular airline.
      * */
     @FXML
     void handleAirlineCol(MouseEvent event) {
@@ -365,7 +388,8 @@ public class airlineController {
     }
 
     /**
-     * handleBtnIUDAction is initiated whenever the insert/update/change status buttons are pressed.
+     * handleBtnIUDAction is initiated whenever the insert/update/renew license/change status
+     * buttons are pressed.
      * */
     @FXML
     void handleBtnIUDAction(ActionEvent event) throws SQLException {
@@ -383,9 +407,10 @@ public class airlineController {
     }
 
     /**
-     * softDeleteAirlineRecord is used to change the operational status column in the database to 0 and vise versa.
+     * softDeleteAirlineRecord is used to change the operational status column in the
+     * database to 0 and vise versa.
      * */
-    private void softDeleteAirlineRecord() {
+    private void softDeleteAirlineRecord() throws SQLException {
 
         LocalDate current_date = LocalDate.now();
         LocalDate issue_date = dpLicenseEffectiveDate.getValue();
@@ -413,7 +438,7 @@ public class airlineController {
     /**
      * renewLicense updates the license issue date and expiry date based on user input
      * */
-    private void renewLicense(){
+    private void renewLicense() throws SQLException {
         LocalDate expiry_date = convertToExpiry();
         LocalDate current_date = LocalDate.now();
 
@@ -439,7 +464,7 @@ public class airlineController {
     /**
      * updateAirlineRecord is used to update the information related to the selected airline.
      * */
-    private void updateAirlineRecord() {
+    private void updateAirlineRecord() throws SQLException {
         String query = "UPDATE airline SET Airline_Name = '"+ tfName.getText() + "', Airline_Address = '"+ tfAddress.getText() +"', Airline_City = '"+tfCity.getText()+"', Airline_State = '"+tfState.getText()+"', Airline_Zip = "+ Integer.parseInt(tfZip.getText()) +", Airline_Email = '"+ tfEmail.getText() +"' WHERE Airline_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showAirlines(1);
@@ -453,7 +478,7 @@ public class airlineController {
     /**
      * insertAirlineRecord is used to insert a new airline into the database.
      * */
-    private void insertAirlineRecord() {
+    private void insertAirlineRecord() throws SQLException {
         LocalDate expiry_date = convertToExpiry();
         LocalDate current_date = LocalDate.now();
 
@@ -480,7 +505,7 @@ public class airlineController {
 
     /**
      * validationCheck is used to check if all the necessary fields are field by user for a
-     * perticular function.
+     * particular function.
      * If not, an alert box is displayed with necessary help text.
      * If any of the conditions does not get satisfied, then function returns false, else returns true.
      * */
@@ -640,6 +665,11 @@ public class airlineController {
         else return false;
     }
 
+    /**
+     * checkAirlineName is used only to check if user entered Airline Name is already present
+     * in the database or not.
+     * If present, function returns true, else returns false.
+     * */
     private boolean checkAirlineName(String AName) throws SQLException {
         Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
         if(airline == null){
@@ -681,7 +711,10 @@ public class airlineController {
         return expiry;
     }
 
-    private void executeQuery(String query) {
+    /**
+     * executeQuery is used only to execute certain queries passed as parameter to this function.
+     * */
+    private void executeQuery(String query) throws SQLException {
         Connection conn = getConnection();
         Statement st;
         try {
@@ -692,8 +725,12 @@ public class airlineController {
         }
     }
 
+    /**
+     * showInactiveAirline gets called on click of Show Inactive Airlines Button.
+     * It displays the airlines with Operational_Status as zero.
+     * */
     @FXML
-    void showInactiveAirlines(ActionEvent event) {
+    void showInactiveAirlines(ActionEvent event) throws SQLException {
         showAirlines(0);
         btnShowActive.setVisible(true);
         btnShowActive.setManaged(true);
@@ -701,8 +738,12 @@ public class airlineController {
         btnShowInactive.setManaged(false);
     }
 
+    /**
+     * showActiveAirline gets called on click of Show Active Airlines Button.
+     * It displays the airlines with Operational_Status as one.
+     * */
     @FXML
-    void showActiveAirlines(ActionEvent event) {
+    void showActiveAirlines(ActionEvent event) throws SQLException {
         showAirlines(1);
         btnShowActive.setVisible(false);
         btnShowActive.setManaged(false);
@@ -710,8 +751,12 @@ public class airlineController {
         btnShowInactive.setManaged(true);
     }
 
+    /**
+     * initialize method contains ivMain and tooltip information to be set as soon as airline.fxml
+     * is loaded.
+     * */
     @FXML
-    void initialize() {
+    void initialize() throws SQLException {
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());
         Tooltip tairport = new Tooltip("Displays selected airline association only if particular airline record selected \nElse displays all airports.");

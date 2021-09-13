@@ -17,6 +17,15 @@ import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
+
+/**
+ * mainController is used to handle the login functionality of the application.
+ *
+ * Methods defined in mainController:
+ * - onStartClick(ActionEvent event);     returns void
+ * - getConnection();                     returns Connection
+ * - initialize();                        return void
+ * */
 public class mainController {
     private Stage stage;
     private Scene scene;
@@ -34,8 +43,9 @@ public class mainController {
     private PasswordField tfPassword;
 
     /**
-     * onStartClick method is called when the Start button is clicked. This takes the user
-     * to airline details page, that is, airline.fxml.
+     * onStartClick method is called when the login button is clicked. This takes the user
+     * to airline details page, that is, airline.fxml only if the entered username and
+     * password details are correct. Otherwise, an error alert is shown to the user.
      * */
     @FXML
     void onStartClick(ActionEvent event) throws IOException {
@@ -45,7 +55,6 @@ public class mainController {
 
         String query = "SELECT * FROM login WHERE username = '"+username+"'";
         Connection conn = getConnection();
-
         try{
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
@@ -72,10 +81,13 @@ public class mainController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
     }
 
+    /**
+     * getConnection method is called whenever a query needs to be executed in the database.
+     * This method creates a connection to the ams database present in the MySQL database server
+     * using the admin login credentials.
+     * */
     public Connection getConnection(){
         Connection conn;
         try {
@@ -89,16 +101,15 @@ public class mainController {
         }
     }
 
+    /**
+     * initialize method is called as soon as the main.fxml is loaded.
+     * This method deals with ivMain which basically binds the imageView
+     * width property to gridPane width property.
+     * So, if width of gridPane change, the width of imageView automatically will be change.
+     * */
     @FXML
     void initialize() {
-
-        // Bind the imageView width property to gridPane width property
-        // So, if width of gridPane change, the width of imageView automatically will be change
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());
-
-        // Make the ratio same with original image
-        //ivMain.setPreserveRatio(true);
-
     }
 }

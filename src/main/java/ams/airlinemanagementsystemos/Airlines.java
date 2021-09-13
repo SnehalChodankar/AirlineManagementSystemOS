@@ -1,11 +1,19 @@
 package ams.airlinemanagementsystemos;
 
 import java.sql.Date;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.ZoneId;
 
+/**
+ * Airlines is the model class of the airlineController.
+ * This class contains the constructor to initialize all the varaibles associated with airlines table
+ * in the database.
+ * It also contains the getter methods used for accessing the values from the variables.
+ *
+ * Methods defined in Airlines:
+ * - Airlines - Parameterized Constructor
+ * - getter Methods for all the variables declared.
+ * */
 public class Airlines {
     private String Airline_Code;
     private String Airline_Name;

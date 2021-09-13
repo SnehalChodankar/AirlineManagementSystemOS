@@ -8,12 +8,18 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * mainApplication loads up the start up screen, that is, the login page of the application.
+ *
+ * Methods defined in mainApplication:
+ * - start(Stage stage);                 returns void
+ * - main(String[] args);                returns void
+ * */
 public class mainApplication extends Application {
 
     /**
-     * Start method is used to load the first scene, main.fxml.
+     * start method is used to load the first scene, main.fxml.
      * */
-
     @Override
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
