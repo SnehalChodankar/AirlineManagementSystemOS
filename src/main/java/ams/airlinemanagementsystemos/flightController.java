@@ -114,6 +114,9 @@ public class flightController {
     @FXML
     private Button btnShowInactive;
 
+    @FXML
+    private Button btnBack;
+
     //ObservableList<String> departsFromList;
 
     public String airlineCode;
@@ -665,7 +668,24 @@ public class flightController {
     void initialize() {
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());
-
+        Tooltip tInsert = new Tooltip("Inserts a flight record.");
+        btnFlightInsert.setTooltip(tInsert);
+        Tooltip tUpdate = new Tooltip("Updates a flight record.");
+        btnFlightUpdate.setTooltip(tUpdate);
+        Tooltip tFlightStatus = new Tooltip("Changes the status of the selected flight.");
+        btnFlightSoftDelete.setTooltip(tFlightStatus);
+        Tooltip tInsertRoute = new Tooltip("Inserts a route for that flight.");
+        btnRouteInsert.setTooltip(tInsertRoute);
+        Tooltip tUpdateRoute = new Tooltip("Updates a flight record.");
+        btnRouteUpdate.setTooltip(tUpdateRoute);
+        Tooltip tRouteStatus = new Tooltip("Changes the status of the selected flight.");
+        btnRouteSoftDelete.setTooltip(tRouteStatus);
+        Tooltip tInactiveFlight = new Tooltip("Displays list of all the inactive flights.");
+        btnShowInactive.setTooltip(tInactiveFlight);
+        Tooltip tActiveFlight = new Tooltip("Displays list of all the active airline.");
+        btnShowActive.setTooltip(tActiveFlight);
+        Tooltip tBack = new Tooltip("Goes back to the previous page");
+        btnBack.setTooltip(tBack);
         btnShowActive.setVisible(false);
         btnShowActive.setManaged(false);
     }

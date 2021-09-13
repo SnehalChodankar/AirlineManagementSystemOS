@@ -95,6 +95,12 @@ public class passengerController {
     private Button btnShowInactive;
 
     @FXML
+    private Button btnReservations;
+
+    @FXML
+    private Button btnBack;
+
+    @FXML
     void showActivePassengers(ActionEvent event) {
         showPassengers(1);
         btnShowActive.setVisible(false);
@@ -341,6 +347,20 @@ public class passengerController {
 
     @FXML
     void initialize() {
+        Tooltip tInsertPassenger = new Tooltip("Inserts a passenger record.");
+        btnPassengerInsert.setTooltip(tInsertPassenger);
+        Tooltip tUpdatePassenger = new Tooltip("Updates a passenger record.");
+        btnPassengerUpdate.setTooltip(tUpdatePassenger);
+        Tooltip tDeletePassenger = new Tooltip("Soft-delete the passenger details.");
+        btnPassengerDelete.setTooltip(tDeletePassenger);
+        Tooltip tActiveAccounts = new Tooltip("Displays list of all the active profiles.");
+        btnShowActive.setTooltip(tActiveAccounts);
+        Tooltip tInactiveAccounts = new Tooltip("Displays list of all the inactive profiles.");
+        btnShowInactive.setTooltip(tInactiveAccounts);
+        Tooltip tReservations = new Tooltip("Displays the reservation page.");
+        btnReservations.setTooltip(tReservations);
+        Tooltip tBack = new Tooltip("Goes back to the previous page");
+        btnBack.setTooltip(tBack);
         showPassengers(1);
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());

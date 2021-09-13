@@ -204,8 +204,8 @@
             <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="942.0" spacing="20.0">
                <children>
                 <Button fx:id="btnAirports" alignment="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#goToAirports" prefHeight="5.0" prefWidth="77.0" stylesheets="@button.css" text="Airports" textFill="WHITE" />
-                  <Button fx:id="btnFlights" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToFlights" prefHeight="30.0" prefWidth="100.0" stylesheets="@button.css" text="Flights" textFill="WHITE" />
-                  <Button fx:id="btnPassengers" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToPassengers" prefHeight="43.0" prefWidth="100.0" text="Passengers" textFill="WHITE">
+                  <Button fx:id="btnFlights" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToFlights" prefHeight="37.0" prefWidth="78.0" stylesheets="@button.css" text="Flights" textFill="WHITE" />
+                  <Button fx:id="btnPassengers" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToPassengers" prefHeight="37.0" prefWidth="90.0" text="Passengers" textFill="WHITE">
                      <stylesheets>
                         <URL value="@button.css" />
                         <URL value="@button.css" />

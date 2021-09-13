@@ -100,6 +100,9 @@ public class reservationController {
     private Button btnReservationCancel;
 
     @FXML
+    private Button btnBack;
+
+    @FXML
     void handleIUDAction(ActionEvent event) {
         if(validationCheck(event.getSource())){
             if(event.getSource() == btnReservationInsert){
@@ -344,6 +347,12 @@ public class reservationController {
 
     @FXML
     void initialize() {
+        Tooltip tInsertReservation = new Tooltip("Inserts a new reservation.");
+        btnReservationInsert.setTooltip(tInsertReservation);
+        Tooltip tCancelReservation = new Tooltip("Cancels a reservation");
+        btnReservationCancel.setTooltip(tCancelReservation);
+        Tooltip tBack = new Tooltip("Goes back to the previous page");
+        btnBack.setTooltip(tBack);
         showReservations();
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());

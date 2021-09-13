@@ -720,7 +720,7 @@ public class airlineController {
         btnFlights.setTooltip(tFlights);
         Tooltip tPassengers = new Tooltip("Displays the records of Passengers.");
         btnPassengers.setTooltip(tPassengers);
-        Tooltip tInactive = new Tooltip("Displays list of all the inactive airline.");
+        Tooltip tInactive = new Tooltip("Displays list of all the inactive airlines.");
         btnShowInactive.setTooltip(tInactive);
         Tooltip tairlineInsert = new Tooltip("Inserts an airline record.");
         btnAirlineInsert.setTooltip(tairlineInsert);
@@ -732,7 +732,7 @@ public class airlineController {
         btnAirlineSoftDelete.setTooltip(tStatus);
         Tooltip tBack = new Tooltip("Goes back to the previous page");
         btnBack.setTooltip(tBack);
-        Tooltip taActive = new Tooltip("Displays list of all the active airline.");
+        Tooltip taActive = new Tooltip("Displays list of all the active airlines.");
         btnShowActive.setTooltip(taActive);
         showAirlines(1);
         cbDuration.setItems(durationList);

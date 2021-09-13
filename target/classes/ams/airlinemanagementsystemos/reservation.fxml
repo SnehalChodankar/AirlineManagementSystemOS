@@ -41,7 +41,7 @@
                      <children>
                         <Label text="Reservations" textFill="WHITE">
                            <font>
-                              <Font name="System Bold Italic" size="30.0" />
+                              <Font name="Footlight MT Light" size="39.0" />
                            </font>
                            <VBox.margin>
                               <Insets top="10.0" />
@@ -107,7 +107,7 @@
                                           <Insets bottom="3.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Class" textFill="WHITE">
+                                    <Label text="Class">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -115,7 +115,7 @@
                                           <Insets bottom="3.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Fare" textFill="WHITE">
+                                    <Label text="Fare">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
@@ -173,7 +173,7 @@
                   </VBox>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#handleBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back" textFill="WHITE">
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#handleBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" />
                </VBox.margin>

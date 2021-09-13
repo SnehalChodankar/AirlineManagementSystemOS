@@ -236,16 +236,13 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="857.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
-<<<<<<< HEAD
+
 
                   <Button fx:id="btnShowActive" mnemonicParsing="false" onAction="#showActiveFlights" prefHeight="37.0" prefWidth="169.0" stylesheets="@button.css" text="Show Active Flights" />
                   <Button fx:id="btnShowInactive" mnemonicParsing="false" onAction="#showInactiveFlights" prefHeight="37.0" prefWidth="161.0" stylesheets="@button.css" text="Show Inactive Flights" />
 
-=======
-                  <Button fx:id="btnShowActive" mnemonicParsing="false" onAction="#showActiveFlights" prefHeight="37.0" prefWidth="169.0" stylesheets="@button.css" text="Show Active Flights" />
-                  <Button fx:id="btnShowInactive" mnemonicParsing="false" onAction="#showInactiveFlights" prefHeight="37.0" prefWidth="161.0" stylesheets="@button.css" text="Show Inactive Flights" />
                   
->>>>>>> c262ece383cbab6f25bc920ef619db644f014d36
+
                </children>
                <VBox.margin>
                   <Insets top="5.0" />
@@ -254,7 +251,7 @@
                   <Insets left="250.0" />
                </padding>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#onBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back">
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="-43.0" />
                </VBox.margin>

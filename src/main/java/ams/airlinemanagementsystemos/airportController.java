@@ -373,7 +373,7 @@ public class airportController {
 
     @FXML
     void initialize() {
-        Tooltip tInsert = new Tooltip("Inserts a airport record.");
+        Tooltip tInsert = new Tooltip("Inserts an airport record.");
         btnAirportInsert.setTooltip(tInsert);
         Tooltip tUpdate = new Tooltip("Updates the airport details.");
         btnAirportUpdate.setTooltip(tUpdate);
