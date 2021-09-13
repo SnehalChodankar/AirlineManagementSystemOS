@@ -494,7 +494,7 @@ public class flightController {
             String arr_time = hour + ":" + minute + ":00";
             java.sql.Time arrivalTime = java.sql.Time.valueOf(arr_time);
 
-            if (checkRoute(tfCode.getText(), departureTime)) {
+            if (checkRoute(btnRouteInsert,tfCode.getText(), departureTime)) {
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setHeaderText("Invalid time!!!");
                 a.setContentText("Departure time clashes with current schedule");
@@ -502,8 +502,6 @@ public class flightController {
             } else {
                 String departureAirport = getAirportCode(cbDepartsFrom.getValue());
                 String arrivalAirport = getAirportCode(cbArrrivesAt.getValue());
-                //System.out.println(departureAirport);
-                //System.out.println(arrivalAirport);
 
                 String query = "INSERT INTO route (`Flight_Code`, `Departure_Time`, `Departure_Airport`, `Arrival_Time`, `Arrival_Airport`) VALUES ('" + tfCode.getText() + "', '" + departureTime + "', '" + departureAirport + "', '" + arrivalTime + "', '" + arrivalAirport + "')";
                 executeQuery(query);
@@ -561,7 +559,7 @@ public class flightController {
             String arr_time = hour+":"+minute+":00";
             java.sql.Time arrivalTime = java.sql.Time.valueOf(arr_time);
 
-            if(checkRoute(tfCode.getText(),departureTime)){
+            if(checkRoute(btnRouteUpdate,tfCode.getText(),departureTime)){
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setHeaderText("Invalid time!!!");
                 a.setContentText("Departure time clashes with current schedule");
@@ -599,10 +597,10 @@ public class flightController {
         }
     }
 
-    private boolean checkRoute(String FCode,java.sql.Time DTime) throws SQLException {
+    private boolean checkRoute(Button source,String FCode,java.sql.Time DTime) throws SQLException {
         Connection conn = getConnection();
         String query;
-        if(routeId != 0){
+        if(source==btnRouteUpdate){
             query = "SELECT * FROM route WHERE Flight_Code='"+FCode+"' AND Route_Id!='"+routeId+"'";
         }
         else{
