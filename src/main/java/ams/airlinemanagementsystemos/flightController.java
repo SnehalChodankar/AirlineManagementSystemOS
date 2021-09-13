@@ -665,6 +665,7 @@ public class flightController {
     void initialize() {
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());
+
         btnShowActive.setVisible(false);
         btnShowActive.setManaged(false);
     }
