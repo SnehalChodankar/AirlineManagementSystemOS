@@ -11,8 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,16 +27,10 @@ public class routeController {
     public void setFlightCode(String fcode,flightController fc){
         this.flightCode = fcode;
         this.fc=fc;
-        ivMain.fitWidthProperty().bind(apMain.widthProperty());
-        ivMain.fitHeightProperty().bind(apMain.heightProperty());
         showRoutes();
     }
 
-    @FXML
-    private AnchorPane apMain;
 
-    @FXML
-    private ImageView ivMain;
 
     @FXML
     private TableView<Routes> tvRoutes;

@@ -10,13 +10,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -124,6 +124,18 @@ public class airlineController {
 
     @FXML
     private Button btnShowActive;
+
+    @FXML
+    private Button btnAirports;
+
+    @FXML
+    private Button btnFlights;
+
+    @FXML
+    private Button btnPassengers;
+
+    @FXML
+    private Button btnBack;
 
     /**
      * onBackAction function activates when user clicks on Back button in airline.fxml.
@@ -247,6 +259,7 @@ public class airlineController {
             System.out.println("Error: "+ ex.getMessage());
             return null;
         }
+
     }
 
     /**
@@ -701,9 +714,30 @@ public class airlineController {
     void initialize() {
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());
+        Tooltip tairport = new Tooltip("Displays selected airline association only if particular airline record selected \nElse displays all airports.");
+        btnAirports.setTooltip(tairport);
+        Tooltip tFlights = new Tooltip("Displays flight details of the selected airline.");
+        btnFlights.setTooltip(tFlights);
+        Tooltip tPassengers = new Tooltip("Displays the records of Passengers.");
+        btnPassengers.setTooltip(tPassengers);
+        Tooltip tInactive = new Tooltip("Displays list of all the inactive airline.");
+        btnShowInactive.setTooltip(tInactive);
+        Tooltip tairlineInsert = new Tooltip("Inserts an airline record.");
+        btnAirlineInsert.setTooltip(tairlineInsert);
+        Tooltip tairlineUpdate = new Tooltip("Updates an airline record.");
+        btnAirlineUpdate.setTooltip(tairlineUpdate);
+        Tooltip tairlineRenewLicense = new Tooltip("Renews the license of the selected airline.");
+        btnAirlineLicenseRenew.setTooltip(tairlineRenewLicense);
+        Tooltip tStatus = new Tooltip("Changes the status of the selected airline.");
+        btnAirlineSoftDelete.setTooltip(tStatus);
+        Tooltip tBack = new Tooltip("Goes back to the previous page");
+        btnBack.setTooltip(tBack);
+        Tooltip taActive = new Tooltip("Displays list of all the active airline.");
+        btnShowActive.setTooltip(taActive);
         showAirlines(1);
         cbDuration.setItems(durationList);
         btnShowActive.setVisible(false);
         btnShowActive.setManaged(false);
+
     }
 }

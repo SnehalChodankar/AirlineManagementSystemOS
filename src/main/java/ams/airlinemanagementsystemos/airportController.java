@@ -106,6 +106,9 @@ public class airportController {
     private Button btnAirportDeleteAssociation;
 
     @FXML
+    private Button btnBack;
+
+    @FXML
     void onBackAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("airline.fxml"));
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
@@ -370,6 +373,18 @@ public class airportController {
 
     @FXML
     void initialize() {
+        Tooltip tInsert = new Tooltip("Inserts a airport record.");
+        btnAirportInsert.setTooltip(tInsert);
+        Tooltip tUpdate = new Tooltip("Updates the airport details.");
+        btnAirportUpdate.setTooltip(tUpdate);
+        Tooltip tStatus = new Tooltip("Changes the status of the selected airline.");
+        btnAirportChangeStatus.setTooltip(tStatus);
+        Tooltip tinsertAssociation = new Tooltip("Inserts the association with the selected airline");
+        btnAirportInsertAssociation.setTooltip(tinsertAssociation);
+        Tooltip tdeleteAssociation = new Tooltip("Deletes the association with the selected airline.");
+        btnAirportDeleteAssociation.setTooltip(tdeleteAssociation);
+        Tooltip tBack = new Tooltip("Goes back to the previous page.");
+        btnBack.setTooltip(tBack);
         showAirports();
         ivMain.fitWidthProperty().bind(apMain.widthProperty());
         ivMain.fitHeightProperty().bind(apMain.heightProperty());

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -45,6 +46,9 @@
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
+                           <tooltip>
+                              <Tooltip text="Insert a record" />
+                           </tooltip>
                         </Label>
                         <HBox prefHeight="152.0" prefWidth="372.0">
                            <children>
@@ -136,7 +140,7 @@
                   </VBox>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#onBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back" textFill="WHITE">
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>

@@ -236,13 +236,10 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="857.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
-<<<<<<< HEAD
+
                   <Button fx:id="btnShowActive" mnemonicParsing="false" onAction="#showActiveFlights" prefHeight="37.0" prefWidth="169.0" stylesheets="@button.css" text="Show Active Flights" />
                   <Button fx:id="btnShowInactive" mnemonicParsing="false" onAction="#showInactiveFlights" prefHeight="37.0" prefWidth="161.0" stylesheets="@button.css" text="Show Inactive Flights" />
-=======
-                  <Button fx:id="btnShowActive" mnemonicParsing="false" onAction="#showActiveFlights" prefHeight="30.0" prefWidth="131.0" text="Show Active Flights" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnShowInactive" mnemonicParsing="false" onAction="#showInactiveFlights" prefHeight="30.0" prefWidth="131.0" text="Show Inactive Flights" HBox.hgrow="ALWAYS" />
->>>>>>> 2b94b4f1a3fec7618b5b684a61ee0b6ac34967ca
+
                </children>
                <VBox.margin>
                   <Insets top="5.0" />

@@ -39,7 +39,7 @@ public class passengerController {
 
     @FXML
     private ImageView ivMain;
-    
+
     @FXML
     private ResourceBundle resources;
 
