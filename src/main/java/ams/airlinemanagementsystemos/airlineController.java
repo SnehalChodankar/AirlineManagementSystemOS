@@ -13,6 +13,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import java.io.IOException;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +34,12 @@ public class airlineController {
 
     //Used to fill in the cbDuration dropdown with number of months for license validity.
     ObservableList<Integer> durationList = FXCollections.observableArrayList(6,12,24);
+
+    @FXML
+    private AnchorPane apMain;
+
+    @FXML
+    private  ImageView ivMain;
 
     @FXML
     private TableView<Airlines> tvAirlines;
@@ -142,14 +151,11 @@ public class airlineController {
         //Used to fetch the details of selected airline row from the table.
         Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
 
-        //condition checks if the airline object really contains any data inside or not.
-        //If the object is null, user didn't select any airline from the table.
-        //If the object is not null, user has selected an airline and he can be redirected to airport.fxml
+        /**condition checks if the airline object really contains any data inside or not.
+         * If the object is null, user didn't select any airline from the table.
+         * If the object is not null, user has selected an airline and he can be redirected to airport.fxml
+         * */
         if(airline == null){
-//            System.out.println("Please select an airline to proceed to airport details.");
-//            Alert a = new Alert(Alert.AlertType.ERROR);
-//            a.setContentText("Please select an airline to proceed to airport details.");
-//            a.show();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("airport.fxml"));
             Parent root = loader.load();
@@ -194,7 +200,6 @@ public class airlineController {
         Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
 
         if(airline == null){
-            System.out.println("Please select an airline to proceed to flights details.");
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setContentText("Please select an airline to proceed to flights details.");
             a.show();
@@ -369,14 +374,27 @@ public class airlineController {
      * */
     private void softDeleteAirlineRecord() {
 
-        String query = "UPDATE airline SET Operational_Status= Operational_Status ^ 1 WHERE Airline_Code = '"+tfCode.getText()+"'";
-        executeQuery(query);
-        showAirlines(1);
-        btnShowActive.setVisible(false);
-        btnShowActive.setManaged(false);
-        btnShowInactive.setVisible(true);
-        btnShowInactive.setManaged(true);
-        resetTextField();
+        LocalDate current_date = LocalDate.now();
+        LocalDate issue_date = dpLicenseEffectiveDate.getValue();
+        LocalDate expiry_date = convertToExpiry();
+
+        if(current_date.isAfter(expiry_date) || current_date.isBefore(issue_date)){
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setHeaderText("Invalid License");
+            a.setContentText("License is not valid,please check License Issue Date & Duration");
+            a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            a.show();
+        }
+        else {
+            String query = "UPDATE airline SET Operational_Status= Operational_Status ^ 1 WHERE Airline_Code = '" + tfCode.getText() + "'";
+            executeQuery(query);
+            showAirlines(1);
+            btnShowActive.setVisible(false);
+            btnShowActive.setManaged(false);
+            btnShowInactive.setVisible(true);
+            btnShowInactive.setManaged(true);
+            resetTextField();
+        }
     }
 
     /**
@@ -455,18 +473,21 @@ public class airlineController {
      * */
     private boolean validationCheck(Object src) throws SQLException {
         Alert a = new Alert(Alert.AlertType.WARNING);
+
+        Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
+
         boolean isAirlineCode = tfCode.getText().chars().allMatch(Character::isLetterOrDigit);
-        boolean isAirlineName = tfName.getText().chars().allMatch(Character::isLetter);
-        boolean isCity = tfCity.getText().chars().allMatch(Character::isLetter);
-        boolean isState = tfState.getText().chars().allMatch(Character::isLetter);
+        Pattern p = Pattern.compile("^[ A-Za-z]+$");
+        boolean isAirlineName = p.matcher(tfCity.getText()).matches();
+        boolean isCity = p.matcher(tfCity.getText()).matches();
+        boolean isState = p.matcher(tfCity.getText()).matches();
         boolean isZip = tfZip.getText().chars().allMatch(Character::isDigit);
 
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+"[a-zA-Z0-9_+&*-]+)*@"+"(?:[a-zA-Z0-9-]+\\.)+[a-z"+"A-Z]{2,7}$";
-        Pattern pat = Pattern.compile(emailRegex);
-        boolean isEmail = pat.matcher(tfEmail.getText()).matches();
+        p = Pattern.compile(emailRegex);
+        boolean isEmail = p.matcher(tfEmail.getText()).matches();
 
         if(src == btnAirlineInsert){
-
 
             if(Objects.equals(tfCode.getText(), "") || Objects.equals(tfName.getText(), "") || Objects.equals(tfAddress.getText(), "") || Objects.equals(tfCity.getText(), "") || Objects.equals(tfState.getText(), "") || Objects.equals(tfZip.getText(), "") || Objects.equals(tfEmail.getText(), "") || dpLicenseEffectiveDate.getValue() == null || cbDuration.getValue() == null){
                 a.setContentText("Please fill all the fields!!! ");
@@ -503,7 +524,7 @@ public class airlineController {
                 a.show();
                 return false;
             }
-            else if(checkAirlineCode(tfCode.getText())){
+            else if( checkAirlineCode(tfCode.getText())){
                 a.setContentText("Airline Code already exists in the database.");
                 a.show();
                 return false;
@@ -551,12 +572,12 @@ public class airlineController {
                 a.show();
                 return false;
             }
-            else if(checkAirlineCode(tfCode.getText())){
+            else if(!Objects.equals(tfCode.getText(), airline.getAirline_Code()) && checkAirlineCode(tfCode.getText())){
                 a.setContentText("Airline Code already exists in the database.");
                 a.show();
                 return false;
             }
-            else if(checkAirlineName(tfName.getText())){
+            else if(!Objects.equals(tfName.getText(), airline.getAirline_Name()) &&  checkAirlineName(tfName.getText())){
                 a.setContentText("Airline Name already exists in the database.");
                 a.show();
                 return false;
@@ -608,13 +629,13 @@ public class airlineController {
 
     private boolean checkAirlineName(String AName) throws SQLException {
         Airlines airline =  tvAirlines.getSelectionModel().getSelectedItem();
-        System.out.println("inside check");
+        if(airline == null){
+            return false;
+        }
         if(Objects.equals(airline.getAirline_Name(), AName)){
-            System.out.println("Inside if");
             return false;
         }
         else{
-            System.out.println("inside else");
             Connection conn = getConnection();
             String query = "SELECT * FROM airline WHERE Airline_Name='"+AName+"'";
             Statement st;
@@ -638,8 +659,11 @@ public class airlineController {
         cbDuration.setValue(dur);
         Calendar cal = new GregorianCalendar();
         cal.set(d.getYear(), d.getMonthValue(), d.getDayOfMonth());
-        cal.add(Calendar.MONTH,dur-1);                  //duration - 1 since Calendar Object stores months as 1 index less(0-11)
-        //i.e. Month 7 Entered into Calendar will be seen as Month 8 by the Calendar
+        cal.add(Calendar.MONTH,dur-1);
+        /**
+         *duration - 1 since Calendar Object stores months as 1 index less(0-11)
+         * i.e. Month 7 Entered into Calendar will be seen as Month 8 by the Calendar
+         * */
         LocalDate expiry = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
         return expiry;
     }
@@ -675,6 +699,8 @@ public class airlineController {
 
     @FXML
     void initialize() {
+        ivMain.fitWidthProperty().bind(apMain.widthProperty());
+        ivMain.fitHeightProperty().bind(apMain.heightProperty());
         showAirlines(1);
         cbDuration.setItems(durationList);
         btnShowActive.setVisible(false);

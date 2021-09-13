@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -8,18 +9,25 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" styleClass="backgroundColor" stylesheets="@style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.airlineController">
+<AnchorPane fx:id="apMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ams.airlinemanagementsystemos.airlineController">
    <children>
+      <ImageView fx:id="ivMain" fitHeight="500.0" fitWidth="1000.0" pickOnBounds="true">
+         <image>
+            <Image url="@backgroundImage.jpg" />
+         </image>
+      </ImageView>
       <VBox layoutX="-1.0" layoutY="14.0" prefHeight="500.0" prefWidth="1000.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox prefHeight="399.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
                <children>
-                  <TableView fx:id="tvAirlines" onMouseClicked="#handleAirlineCol" prefHeight="394.0" prefWidth="518.0" HBox.hgrow="ALWAYS">
+                  <TableView fx:id="tvAirlines" onMouseClicked="#handleAirlineCol" prefHeight="375.0" prefWidth="517.0" HBox.hgrow="ALWAYS">
                      <columns>
                         <TableColumn fx:id="colCode" minWidth="0.0" prefWidth="35.333312034606934" text="Code" />
                         <TableColumn fx:id="colName" minWidth="0.0" prefWidth="70.00000381469727" text="Name" />
@@ -42,7 +50,7 @@
                      <children>
                         <Label text="Airlines" textFill="WHITE">
                            <font>
-                              <Font name="System Bold Italic" size="30.0" />
+                              <Font name="Footlight MT Light" size="39.0" />
                            </font>
                            <VBox.margin>
                               <Insets top="10.0" />
@@ -63,7 +71,7 @@
                                           <Insets top="2.0" />
                                        </padding>
                                     </Label>
-                                    <Label text="Name" textFill="#f6f6f6">
+                                    <Label text="Name" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
@@ -111,7 +119,7 @@
                                           <Insets bottom="4.0" top="1.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Licence Effective Date" textFill="WHITE">
+                                    <Label text="Licence Effective Date" textFill="#363535">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -119,9 +127,9 @@
                                           <Insets bottom="4.0" top="2.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label text="Duration (months)" textFill="WHITE">
+                                    <Label styleClass="labelOutline" stylesheets="@button.css" text="Duration (months)">
                                        <font>
-                                          <Font size="15.0" />
+                                          <Font name="System Bold" size="15.0" />
                                        </font>
                                        <VBox.margin>
                                           <Insets bottom="4.0" />
@@ -180,10 +188,10 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Button fx:id="btnAirlineInsert" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="65.0" text="Insert" />
-                              <Button fx:id="btnAirlineUpdate" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="65.0" text="Update" />
-                              <Button fx:id="btnAirlineLicenseRenew" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="95.0" text="Renew License" />
-                              <Button fx:id="btnAirlineSoftDelete" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="97.0" text="Change Status" />
+                              <Button fx:id="btnAirlineInsert" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="30.0" prefWidth="65.0" stylesheets="@button.css" text="Insert" textFill="WHITE" />
+                              <Button fx:id="btnAirlineUpdate" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="37.0" prefWidth="73.0" stylesheets="@button.css" text="Update" textFill="WHITE" />
+                              <Button fx:id="btnAirlineLicenseRenew" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="37.0" prefWidth="109.0" stylesheets="@button.css" text="Renew License" textFill="WHITE" />
+                              <Button fx:id="btnAirlineSoftDelete" mnemonicParsing="false" onAction="#handleBtnIUDAction" prefHeight="37.0" prefWidth="99.0" stylesheets="@button.css" text="Change Status" textFill="WHITE" />
                            </children>
                         </HBox>
                      </children>
@@ -193,17 +201,21 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox alignment="CENTER" spacing="20.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="942.0" spacing="20.0">
                <children>
-                <Button mnemonicParsing="false" onAction="#goToAirports" prefHeight="30.0" prefWidth="100.0" text="Airports" />
-                  <Button mnemonicParsing="false" onAction="#goToFlights" prefHeight="30.0" prefWidth="100.0" text="Flights" />
-                  <Button mnemonicParsing="false" onAction="#goToPassengers" prefHeight="30.0" prefWidth="100.0" text="Passengers" />
-                  <Button fx:id="btnShowInactive" mnemonicParsing="false" onAction="#showInactiveAirlines" prefHeight="30.0" prefWidth="133.0" text="Show Inactive Airlines">
+                <Button alignment="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#goToAirports" prefHeight="5.0" prefWidth="77.0" stylesheets="@button.css" text="Airports" textFill="WHITE" />
+                  <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToFlights" prefHeight="30.0" prefWidth="100.0" stylesheets="@button.css" text="Flights" textFill="WHITE" />
+                  <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToPassengers" prefHeight="43.0" prefWidth="100.0" text="Passengers" textFill="WHITE">
+                     <stylesheets>
+                        <URL value="@button.css" />
+                        <URL value="@button.css" />
+                     </stylesheets></Button>
+                  <Button fx:id="btnShowInactive" mnemonicParsing="false" onAction="#showInactiveAirlines" prefHeight="37.0" prefWidth="149.0" stylesheets="@button.css" text="Show Inactive Airlines" textFill="WHITE">
                      <HBox.margin>
                         <Insets left="30.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnShowActive" mnemonicParsing="false" onAction="#showActiveAirlines" prefHeight="30.0" prefWidth="133.0" text="Show Active Airlines">
+                  <Button fx:id="btnShowActive" alignment="BOTTOM_LEFT" mnemonicParsing="false" onAction="#showActiveAirlines" prefHeight="37.0" prefWidth="143.0" stylesheets="@button.css" text="Show Active Airlines" textAlignment="RIGHT" textFill="WHITE">
                      <HBox.margin>
                         <Insets left="30.0" />
                      </HBox.margin></Button>
@@ -212,7 +224,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#onBackAction" prefHeight="25.0" prefWidth="65.0" text="Back">
+            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onBackAction" prefHeight="25.0" prefWidth="65.0" stylesheets="@button.css" text="Back" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" />
                </VBox.margin>

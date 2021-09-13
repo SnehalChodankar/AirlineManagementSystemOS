@@ -1,0 +1,18 @@
+.button {
+  -fx-padding: 10px 15px;
+  -fx-cursor: pointer;
+  -fx-text-align: center;
+  -fx-text-decoration: none;
+  -fx-color: black;
+  -fx-background-color: black;
+  -fx-border: none;
+  -fx-border-radius: 15px;
+}
+
+.button:hover {-fx-background-color: white;
+-fx-text-fill: black;}
+
+.labelOutline {
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}

@@ -11,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,6 +54,11 @@ public class airportController {
         }
     }
 
+    @FXML
+    private AnchorPane apMain;
+
+    @FXML
+    private ImageView ivMain;
 
     @FXML
     private TableView<Airports> tvAirports;
@@ -363,7 +370,9 @@ public class airportController {
 
     @FXML
     void initialize() {
-        //showAirports();
+        showAirports();
+        ivMain.fitWidthProperty().bind(apMain.widthProperty());
+        ivMain.fitHeightProperty().bind(apMain.heightProperty());
     }
 
 }

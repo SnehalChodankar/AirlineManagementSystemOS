@@ -5,9 +5,13 @@ import java.net.URL;
 import java.sql.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,7 +22,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class reservationController {
@@ -29,6 +35,12 @@ public class reservationController {
     private int reservationId;
 
     ObservableList<String> flightClasses = FXCollections.observableArrayList("Business", "FirstClass", "Economics");
+
+    @FXML
+    private AnchorPane apMain;
+
+    @FXML
+    private ImageView ivMain;
 
     @FXML
     private TableView<Reservations> tvReservations;
@@ -333,10 +345,45 @@ public class reservationController {
     @FXML
     void initialize() {
         showReservations();
+        ivMain.fitWidthProperty().bind(apMain.widthProperty());
+        ivMain.fitHeightProperty().bind(apMain.heightProperty());
 
         fillChoiceBoxes();
 
         cbClass.setItems(flightClasses);
+
+        cbArrivalAirport.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFlightCode.setText(null);
+                    tfFare.setText(null);
+                    tfArrivalTime.setText(null);
+                    tfDepartureTime.setText(null);
+                } );
+
+        cbDepartureAirport.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFlightCode.setText(null);
+                    tfFare.setText(null);
+                    tfArrivalTime.setText(null);
+                    tfDepartureTime.setText(null);
+                } );
+
+        cbAirline.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFlightCode.setText(null);
+                    tfFare.setText(null);
+                    tfArrivalTime.setText(null);
+                    tfDepartureTime.setText(null);
+                } );
+
+        cbClass.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    tfFare.setText(null);
+                } );
     }
 
     private void fillChoiceBoxes() {

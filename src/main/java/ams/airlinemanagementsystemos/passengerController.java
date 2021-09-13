@@ -7,8 +7,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,6 +34,12 @@ public class passengerController {
 
     private int PassengerCode;
 
+    @FXML
+    private AnchorPane apMain;
+
+    @FXML
+    private ImageView ivMain;
+    
     @FXML
     private ResourceBundle resources;
 
@@ -180,6 +191,11 @@ public class passengerController {
                 a.show();
                 return false;
             }
+            else if(checkDOB()){
+                a.setContentText("Age is Invalid!!!");
+                a.show();
+                return false;
+            }
         }
         else if(source == btnPassengerUpdate){
             if(Objects.equals(tfFirstname.getText(), "") || Objects.equals(tfMiddlename.getText(), "") || Objects.equals(tfLastname.getText(), "") || Objects.equals(tfDOB.getValue(), null)){
@@ -205,9 +221,27 @@ public class passengerController {
                 a.show();
                 return false;
             }
+            else if(checkDOB()){
+                a.setContentText("Age is Invalid!!!");
+                a.show();
+                return false;
+            }
         }
 
         return true;
+    }
+
+    private boolean checkDOB() {
+        LocalDate dob = tfDOB.getValue();
+
+        Calendar c = Calendar.getInstance();
+        LocalDate present = LocalDate.ofInstant(c.toInstant(), ZoneId.systemDefault());
+        int year= Period.between(dob, present).getYears();
+
+        if(LocalDate.now().getYear() <= dob.getYear() || year < 2 || year > 99){
+            return true;
+        }
+        return false;
     }
 
     private void deletePassengerRecord() {
@@ -308,6 +342,8 @@ public class passengerController {
     @FXML
     void initialize() {
         showPassengers(1);
+        ivMain.fitWidthProperty().bind(apMain.widthProperty());
+        ivMain.fitHeightProperty().bind(apMain.heightProperty());
         btnShowActive.setVisible(false);
         btnShowActive.setManaged(false);
     }

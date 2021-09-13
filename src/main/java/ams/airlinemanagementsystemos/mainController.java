@@ -8,10 +8,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 public class mainController {
     private Stage stage;
     private Scene scene;
+
+    @FXML
+    private AnchorPane apMain;
+
+    @FXML
+    private  ImageView ivMain;
 
     /**
      * onStartClick method is called when the Start button is clicked. This takes the user
@@ -28,5 +36,14 @@ public class mainController {
 
     @FXML
     void initialize() {
+
+        // Bind the imageView width property to gridPane width property
+        // So, if width of gridPane change, the width of imageView automatically will be change
+        ivMain.fitWidthProperty().bind(apMain.widthProperty());
+        ivMain.fitHeightProperty().bind(apMain.heightProperty());
+
+        // Make the ratio same with original image
+        //ivMain.setPreserveRatio(true);
+
     }
 }

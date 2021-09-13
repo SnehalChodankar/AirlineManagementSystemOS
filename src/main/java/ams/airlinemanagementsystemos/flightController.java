@@ -1,5 +1,6 @@
 package ams.airlinemanagementsystemos;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.sql.*;
@@ -19,14 +22,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 
 public class flightController {
     private Stage stage;
     private Scene scene;
     private int routeId;
 
+
+    @FXML
+    private AnchorPane apMain;
+
+    @FXML
+    private ImageView ivMain;
 
     @FXML
     private TableView<Flights> tvFlights;
@@ -150,10 +158,29 @@ public class flightController {
             {
                 result.add(rs.getString("Airport_Name"));
             }
-            ObservableList<String> airportList = FXCollections.observableArrayList(result);
-            //System.out.println(airportList);
-            cbDepartsFrom.setItems(airportList);
-            cbArrrivesAt.setItems(airportList);
+            ObservableList<String> airportList1 = FXCollections.observableArrayList(result);
+            ObservableList<String> airportList2 = FXCollections.observableArrayList(result);
+            Collections.sort(airportList1);
+            Collections.sort(airportList2);
+
+            cbDepartsFrom.setItems(airportList1);
+            cbArrrivesAt.setItems(airportList2);
+
+            /**Event listener for selection of depart airport**/
+            cbDepartsFrom.getSelectionModel()
+                    .selectedItemProperty()
+                    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                        for (String x:cbDepartsFrom.getItems()) {
+                            if(!cbArrrivesAt.getItems().contains(x)){
+                                cbArrrivesAt.getItems().add(x);
+                            }
+                        }
+                        if (cbArrrivesAt.getValue()==newValue){
+                            cbArrrivesAt.setValue(null);
+                        }
+                        cbArrrivesAt.getItems().sort(Comparator.naturalOrder());
+                        cbArrrivesAt.getItems().remove(newValue);
+                    } );
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -289,6 +316,8 @@ public class flightController {
     }
 
     private boolean validationCheck(Object source) throws SQLException {
+        Flights flights=tvFlights.getSelectionModel().getSelectedItem();
+
         Alert a = new Alert(Alert.AlertType.WARNING);
 
         if(source == btnFlightInsert){
@@ -339,6 +368,11 @@ public class flightController {
                 a.show();
                 return false;
             }
+            else if(!Objects.equals(flights.getFlight_Code(),tfCode.getText()) && checkFlightCode(tfCode.getText())){
+                a.setContentText("Flight already exists in the database.");
+                a.show();
+                return false;
+            }
         }
         return true;
     }
@@ -381,6 +415,12 @@ public class flightController {
     }
 
     private void softDeleteFlightRecord() {
+        if(Objects.equals(tfCode.getText(), "")){
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("Flight not Selected!!!");
+            a.setContentText("Please select a flight to change the status");
+            a.show();
+        }
         String query = "UPDATE flight SET Availability=Availability ^ 1 WHERE Flight_Code = '"+tfCode.getText()+"'";
         executeQuery(query);
         showFlights(1);
@@ -392,7 +432,7 @@ public class flightController {
     }
 
     @FXML
-    void handleBtnIUDActionRoutes(ActionEvent event) throws ParseException {
+    void handleBtnIUDActionRoutes(ActionEvent event) throws ParseException, SQLException {
         if(event.getSource()==btnRouteInsert){
             insertRoute();
         }
@@ -404,59 +444,92 @@ public class flightController {
         }
     }
 
-    private void insertRoute() throws ParseException {
+    private void insertRoute() throws ParseException, SQLException {
         if(Objects.equals(tfCode.getText(), "")){
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setHeaderText("Flight not Selected!!!");
             a.setContentText("Please select a flight to insert route.");
             a.show();
         }
-        else{
+        else if(cbDepartsFrom.getValue()==null || cbArrivalHour.getValue()==null || cbArrivalMinute.getValue()==null || cbArrivalTime.getValue()==null || cbArrrivesAt.getValue()==null || cbDepartureHour.getValue()==null || cbDepartureMinute.getValue()==null || cbDepartureTime.getValue()==null){
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("Route error!!!");
+            a.setContentText("Please check route details");
+            a.show();
+        }
+        else if(cbArrivalHour.getValue()==cbDepartureHour.getValue() && cbArrivalMinute.getValue()==cbDepartureMinute.getValue() && cbArrivalTime.getValue()==cbDepartureTime.getValue()){
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("Invalid time!!!");
+            a.setContentText("Please check Departure and arrival time");
+            a.show();
+        }
+        else {
             int hour = cbDepartureHour.getValue();
             int minute = cbDepartureMinute.getValue();
             String time = cbDepartureTime.getValue();
 
-            if(Objects.equals(time, "PM") && hour!=12){
-                hour = hour+12;
+            if (Objects.equals(time, "PM") && hour != 12) {
+                hour = hour + 12;
             }
-            if(Objects.equals(time, "AM") && hour==12){
-                hour = hour-12;
+            if (Objects.equals(time, "AM") && hour == 12) {
+                hour = hour - 12;
             }
-            String dept_time = hour+":"+minute+":00";
+            String dept_time = hour + ":" + minute + ":00";
             java.sql.Time departureTime = java.sql.Time.valueOf(dept_time);
 
             hour = cbArrivalHour.getValue();
             minute = cbArrivalMinute.getValue();
             time = cbArrivalTime.getValue();
 
-            if(Objects.equals(time, "PM") && hour!=12){
-                hour = hour+12;
+            if (Objects.equals(time, "PM") && hour != 12) {
+                hour = hour + 12;
             }
-            if(Objects.equals(time, "AM") && hour==12){
-                hour = hour-12;
+            if (Objects.equals(time, "AM") && hour == 12) {
+                hour = hour - 12;
             }
 
-            String arr_time = hour+":"+minute+":00";
+            String arr_time = hour + ":" + minute + ":00";
             java.sql.Time arrivalTime = java.sql.Time.valueOf(arr_time);
 
-            String departureAirport = getAirportCode(cbDepartsFrom.getValue());
-            String arrivalAirport = getAirportCode(cbArrrivesAt.getValue());
-            //System.out.println(departureAirport);
-            //System.out.println(arrivalAirport);
+            if (checkRoute(tfCode.getText(), departureTime)) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setHeaderText("Invalid time!!!");
+                a.setContentText("Departure time clashes with current schedule");
+                a.show();
+            } else {
+                String departureAirport = getAirportCode(cbDepartsFrom.getValue());
+                String arrivalAirport = getAirportCode(cbArrrivesAt.getValue());
+                //System.out.println(departureAirport);
+                //System.out.println(arrivalAirport);
 
-            String query = "INSERT INTO route (`Flight_Code`, `Departure_Time`, `Departure_Airport`, `Arrival_Time`, `Arrival_Airport`) VALUES ('"+tfCode.getText()+"', '"+departureTime+"', '"+departureAirport+"', '"+arrivalTime+"', '"+arrivalAirport+"')";
-            executeQuery(query);
-            showFlights(1);
+                String query = "INSERT INTO route (`Flight_Code`, `Departure_Time`, `Departure_Airport`, `Arrival_Time`, `Arrival_Airport`) VALUES ('" + tfCode.getText() + "', '" + departureTime + "', '" + departureAirport + "', '" + arrivalTime + "', '" + arrivalAirport + "')";
+                executeQuery(query);
+                showFlights(1);
+            }
         }
     }
 
-    private void updateRoute() {
+    private void updateRoute() throws SQLException {
         if(Objects.equals(tfCode.getText(), "")){
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setHeaderText("Flight not Selected!!!");
             a.setContentText("Please select a flight to update route.");
             a.show();
         }
+        else if(cbDepartsFrom.getValue()==null || cbArrivalHour.getValue()==null || cbArrivalMinute.getValue()==null || cbArrivalTime.getValue()==null || cbArrrivesAt.getValue()==null || cbDepartureHour.getValue()==null || cbDepartureMinute.getValue()==null || cbDepartureTime.getValue()==null){
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("Route error!!!");
+            a.setContentText("Please check route details");
+            a.show();
+        }
+
+        else if(cbArrivalHour.getValue()==cbDepartureHour.getValue() && cbArrivalMinute.getValue()==cbDepartureMinute.getValue() && cbArrivalTime.getValue()==cbDepartureTime.getValue()){
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("Invalid time!!!");
+            a.setContentText("Please check Departure and arrival time");
+            a.show();
+        }
+
         else{
             int hour = cbDepartureHour.getValue();
             int minute = cbDepartureMinute.getValue();
@@ -485,12 +558,21 @@ public class flightController {
             String arr_time = hour+":"+minute+":00";
             java.sql.Time arrivalTime = java.sql.Time.valueOf(arr_time);
 
-            String departureAirport = getAirportCode(cbDepartsFrom.getValue());
-            String arrivalAirport = getAirportCode(cbArrrivesAt.getValue());
+            if(checkRoute(tfCode.getText(),departureTime)){
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setHeaderText("Invalid time!!!");
+                a.setContentText("Departure time clashes with current schedule");
+                a.show();
+            }
 
-            String query = "UPDATE route SET Departure_Time='"+departureTime+"', Departure_Airport='"+departureAirport+"', Arrival_Time='"+arrivalTime+"', Arrival_Airport='"+arrivalAirport+"' WHERE Route_ID="+routeId+"";
-            executeQuery(query);
-            showFlights(1);
+            else{
+                String departureAirport = getAirportCode(cbDepartsFrom.getValue());
+                String arrivalAirport = getAirportCode(cbArrrivesAt.getValue());
+
+                String query = "UPDATE route SET Departure_Time='" + departureTime + "', Departure_Airport='" + departureAirport + "', Arrival_Time='" + arrivalTime + "', Arrival_Airport='" + arrivalAirport + "' WHERE Route_ID=" + routeId + "";
+                executeQuery(query);
+                showFlights(1);
+            }
         }
     }
 
@@ -498,7 +580,13 @@ public class flightController {
         if(Objects.equals(tfCode.getText(), "")){
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setHeaderText("Flight not Selected!!!");
-            a.setContentText("Please select a flight to update route.");
+            a.setContentText("Please select a flight for route selection");
+            a.show();
+        }
+        else if(cbDepartsFrom.getValue()==null || cbArrivalHour.getValue()==null || cbArrivalMinute.getValue()==null || cbArrivalTime.getValue()==null || cbArrrivesAt.getValue()==null || cbDepartureHour.getValue()==null || cbDepartureMinute.getValue()==null || cbDepartureTime.getValue()==null){
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("Route error!!!");
+            a.setContentText("Please select a route");
             a.show();
         }
         else{
@@ -507,6 +595,25 @@ public class flightController {
             showFlights(1);
         }
     }
+
+    private boolean checkRoute(String FCode,java.sql.Time DTime) throws SQLException {
+        Connection conn = getConnection();
+        String query = "SELECT * FROM route WHERE Flight_Code='"+FCode+"'";
+        Statement st;
+        ResultSet rs;
+        st = conn.createStatement();
+        rs = st.executeQuery(query);
+
+        while (rs.next())
+        {
+            if((DTime.after(rs.getTime("Departure_Time")) || DTime.equals(rs.getTime("Departure_Time"))) && (DTime.before(rs.getTime("Arrival_Time")) || DTime.equals(rs.getTime("Arrival_Time"))))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private String getAirportCode(String Aname){
         String query = "SELECT Airport_Code FROM airport WHERE Airport_Name='"+Aname+"'";
@@ -556,8 +663,10 @@ public class flightController {
 
     @FXML
     void initialize() {
-        //btnShowActive.setVisible(false);
-        //btnShowActive.setManaged(false);
+        ivMain.fitWidthProperty().bind(apMain.widthProperty());
+        ivMain.fitHeightProperty().bind(apMain.heightProperty());
+        btnShowActive.setVisible(false);
+        btnShowActive.setManaged(false);
     }
 
     private void showFlights(int availability) {
