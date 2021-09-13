@@ -38,7 +38,7 @@
                   <PasswordField fx:id="tfPassword" alignment="CENTER" prefHeight="25.0" prefWidth="236.0" promptText="Password" />
                </children>
             </VBox>
-            <Button alignment="BOTTOM_CENTER" mnemonicParsing="false" onAction="#onStartClick" prefHeight="23.0" prefWidth="136.0" style="-fx-position: fixed;" stylesheets="@button.css" text="START" textFill="WHITE" VBox.vgrow="ALWAYS">
+            <Button alignment="BOTTOM_CENTER" mnemonicParsing="false" onAction="#onStartClick" prefHeight="23.0" prefWidth="136.0" style="-fx-position: fixed;" stylesheets="@button.css" text="Login" textFill="WHITE" VBox.vgrow="ALWAYS">
                <font>
                   <Font name="Footlight MT Light" size="15.0" />
                </font>
