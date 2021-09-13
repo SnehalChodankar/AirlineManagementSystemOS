@@ -601,7 +601,13 @@ public class flightController {
 
     private boolean checkRoute(String FCode,java.sql.Time DTime) throws SQLException {
         Connection conn = getConnection();
-        String query = "SELECT * FROM route WHERE Flight_Code='"+FCode+"'";
+        String query;
+        if(routeId != 0){
+            query = "SELECT * FROM route WHERE Flight_Code='"+FCode+"' AND Route_Id!='"+routeId+"'";
+        }
+        else{
+            query = "SELECT * FROM route WHERE Flight_Code='"+FCode+"'";
+        }
         Statement st;
         ResultSet rs;
         st = conn.createStatement();

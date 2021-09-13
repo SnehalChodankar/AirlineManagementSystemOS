@@ -1,9 +1,15 @@
 package ams.airlinemanagementsystemos;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
-
+/**
+ * Airports is the model class of the airportController.
+ * This class contains the constructor to initialize all the varaibles associated with airport table
+ * in the database.
+ * It also contains the getter methods used for accessing the values from the variables.
+ *
+ * Methods defined in Airports:
+ * - Airports - Parameterized Constructor
+ * - getter Methods for all the variables declared.
+ * */
 public class Airports {
     private String Airport_Code;
     private String Airport_Name;
